@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta name  ="viewport" content="width=device-width, initial-scale=1">
+    <title>StarfireEd Scheduler</title>
+    <link rel="stylesheet" type="text/css"
+        href="./static/css/main.css">
+        
+    <link href= 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/ui-lightness/jquery-ui.css'
+        rel='stylesheet'> 
+    <script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" > </script> 
+    <script type="text/javascript" lang="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.3/xlsx.full.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="./static/js/main.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <!-- Custom Theme JavaScript -->
+  <script src='google-sheet.js'></script>
+</head>
+<body onload="readdata()">
+    <div class="imgTitle">
+        <img class = "logo" src='./static/images/logo/mainLogo.png'>
+        <span class="SFtitle">Scheduler</span>
+    </div>
+    <!--------------------------------->
+    <!-- //Note: item11 = day, item5 = No Date
+                 But in grid layout item11=item5 and item5=item11\\  -->
+    <div class="container">
+        <div class="item1" style="display: inline;">
+            <select id="SeasonTitle" name='seasondrop' onchange="fillSeason()">
+                <option disabled selected value = "">--Season--</option>
+                <option value = "ssp" >Spring</option>
+                <option value = "ssu">Summer</option>
+                <option value = "sw">Winter</option>
+                <option value = "sf">Fall</option>
+            </select>
+            <div class = "addButton">
+                <button type="button" onclick="myAdd()">ADD</button>
+                <span class="secondBTN"><button class= "filterButton" type="button" onclick="filterWValues()">Filter</button></span>
+            </div>
+        </div>
+        
+        <div class="item2">
+            <select id = "getSeason" onchange="getWsName()">
+                <option disabled selected value = "">--SubSeasons--</option>
+            </select>
+        </div>
+
+        <div class="item3">
+            <label>Course:</label>
+            <select id = "getSubject" onchange="fillTeacherSubjects()">
+                <option selected value = "">--Subject--</option>
+            </select>
+        </div>
+
+        <div class="item4">
+            <label>Grade:</label>
+            <select id="getGrade">
+                <option selected value = "">--Grade--</option>
+                    <option value = "g7">K-2</option>
+                    <option value = "g8">3-5</option>
+                    <option value = "g9">6-8</option>
+            </select>
+        </div>
+        <div class="item5">
+            <div class="getNoDate">
+                <Label for="noDate">No Class Date: <input type="date" id="noDate" name="noDate" ondblclick="noDateTxt()" onchange="dateAdd()"></label>
+                <textarea id="noDateTxt" placeholder="Multiple Dates (format: yyyy/mm/dd)" ></textarea>
+            </div>
+        </div>
+        <script>
+        </script>
+        <div class="item6">
+            <label>Time:</label>
+            <select id = "getTime" onchange="DayManage()">
+                <option selected value = "">--Time--</option>
+            </select>
+        </div>
+        <div class="item7">
+            <select id="TeacherSelect" name='teacherdrop' onclick="chkFilterClick()" onchange="fillOtherDrpdn()">
+                <option disabled selected value = "">--Teachers--</option>
+            </select>
+        </div>
+        <div class="item9">
+            <div class="getStartDate">
+                <Label for="startDate">Start Date: <input type="date" id="startDate" name="startDate"></label>
+            </div>
+        </div>
+        <div class="item10">
+            <div class="getEndDate">
+                <Label for="endDate">End Date: <input type="date" id="endDate" name="endDate"></label>
+            </div>
+        </div>
+        <div class="item11">
+            <label>Day:  </label>
+                    <div class="selectBox" onclick="showCheckboxes()">
+                    <select>
+                        <option style="display: none;">--Day--</option>
+                    </select>
+                    <div class="overSelect"></div>
+                    </div>
+                    <div id="checkboxes">
+                    <label for="day1">
+                        <input type="checkbox" id="day1" value="monday" name="weekday"/>Monday</label>
+                    <label for="day2">
+                        <input type="checkbox" id="day2" value="tuesday" name="weekday"/>Tuesday</label>
+                    <label for="day3">
+                        <input type="checkbox" id="day3" value="wednesday" name="weekday"/>Wednesday</label>
+                    <label for="day4">
+                        <input type="checkbox" id="day4" value="thursday" name="weekday"/>Thursday</label>
+                    <label for="day5">
+                        <input type="checkbox" id="day5" value="friday" name="weekday"/>Friday</label>
+                    </div>
+            </div>
+            <script>
+                var expanded = false;
+                
+                function showCheckboxes() {
+                  var checkboxes = document.getElementById("checkboxes");
+                  if (!expanded) {
+                    checkboxes.style.display = "block";
+                    expanded = true;
+                  } 
+                  else {
+                    checkboxes.style.display = "none";
+                    expanded = false;
+                  }
+                }
+            </script>
+        <div class="item12">
+            <label>Total Classes:</label>
+            <select id="getClassNum" onclick="totalClasses()">
+                <option disabled selected value = "">--# Of Classes--</option>
+                    <option value = "num1">1</option>
+                    <option value = "num2">2</option>
+                    <option value = "num4">3</option>
+                    <option value = "num4">4</option>
+                    <option value = "num5">5</option>
+                    <option value = "num6">6</option>
+                    <option value = "num7">7</option>
+                    <option value = "num8">8</option>
+                    <option value = "num9">9</option>
+                    <option value = "num10">10</option>
+            </select>
+        </div>
+ 
+        <div class="item8">
+            <table id = "resTable" style="text-align:center;">
+                <tr id="headRow">
+                    <th >Season</th>
+                    <th>Course</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>No Class Date</th>
+                    <th># of Classes</th>
+                    <th>Teacher</th>
+                    <th>Day</th>
+                    <th>Time</th>
+                    <th>Grade</th>
+                    <th hidden></th>
+                </tr>
+            </table>          
+        <div id='success'></div>
+        <button id="sendButton" onclick="submitNow()">Send</button>
+    <script>
+    function submitNow()
+    {
+    //converttable($("#resTable")[0]);
+    submitTable();
+    //{"Course":["Private Tutoring","Private Tutoring"],"Start Date":["2020-06-29","2020-06-29"]}
+        //var databuf=JSON.stringify({"Course":["Private Tutoring","Private Tutoring"],"Start Date":["2020-06-29","2020-06-29"]});
+        var databuf=JSON.stringify(createXLSLFormatObj);
+        console.log("I m going to try"+databuf);
+    request = $.ajax({
+        url: "https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbzwo8xoGY2TYAc8fShl5ZskV9XgtSGivMyVDG71xyuhb917H-xz/exec",
+        type: "post",
+        data: {data:databuf}      
+    });
+
+    // Callback handler that will be called on success
+    request.done(function (response, textStatus, jqXHR){
+        // Log a message to the console
+        console.log("Hooray, it worked!");
+        console.log(response);
+        console.log(textStatus);
+        console.log(jqXHR);
+    });
+
+    // Callback handler that will be called on failure
+    request.fail(function (jqXHR, textStatus, errorThrown){
+        // Log the error to the console
+        console.error(
+            "The following error occurred: "+
+            textStatus, errorThrown
+        );
+    });
+
+    // Callback handler that will be called regardless
+    // if the request failed or succeeded
+    request.always(function () {
+        console.log("I m in here");
+        // Reenable the inputs
+       // $inputs.prop("disabled", false);
+    });
+
+    // Prevent default posting of form
+    event.preventDefault();
+
+        }
+    </script>
+     </div>
+        </div>
+
+      </div>
+</body>
+</html>
