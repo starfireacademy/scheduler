@@ -18,7 +18,29 @@ body {
 .SFtitle{
   color: red;
   font-size: 60px;
-  padding-left: 500px;
+  padding-left: 400px;
+}
+/* unvisited link */
+a:link {
+  font-size: 20px;
+  color: red;
+  text-decoration: none;
+}
+
+/* visited link */
+a:visited {
+  color: Blue;
+}
+
+/* mouse over link */
+a:hover {
+  color: orangered;
+  text-decoration: underline;
+}
+
+/* selected link */
+a:active {
+  color: red;
 }
 .container {
   display: grid;
@@ -47,11 +69,24 @@ body {
   padding-top: 25px;
   padding-bottom: 25px;
 }
+.InOutLinks{
+  float: left;
+  margin-right: 200px;
+  margin-left: 60px;
+}
+.link2{
+  position: absolute;
+  margin-top: 10px;
+}
 #SeasonTitle{
   font-size: 50px;
   color:black;
-  float: left;
-  margin-left: 500px;
+  position: relative;
+}
+.addButton{
+  margin-left: 200px;
+  position: relative;
+  display: inline-block;
 }
 
 .item2 {
