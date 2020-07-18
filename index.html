@@ -4,29 +4,34 @@
     <meta name  ="viewport" content="width=device-width, initial-scale=1">
     <title>StarfireEd Scheduler</title>
     <link rel="stylesheet" type="text/css"
-        href="./main.css">
-        
-    <link href= 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/ui-lightness/jquery-ui.css'
-        rel='stylesheet'> 
-    <script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" > </script> 
+        href="./static/css/main.css">
+    <script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> 
     <script type="text/javascript" lang="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.3/xlsx.full.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-    <script src="./main.js"></script>
+    <script src="./static/js/main.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
   <!-- Custom Theme JavaScript -->
   <script src='google-sheet.js'></script>
 </head>
 <body onload="readdata()">
     <div class="imgTitle">
-        <img class = "logo" src='./mainLogo.png'>
+        <img class = "logo" src='./static/images/logo/mainLogo.png'>
         <span class="SFtitle">Scheduler</span>
     </div>
     <!--------------------------------->
     <!-- //Note: item11 = day, item5 = No Date
                  But in grid layout item11=item5 and item5=item11\\  -->
     <div class="container">
-        <div class="item1" style="display: inline;">
+        <div class="item1" style="display: inline-block;">
+            <div class="InOutLinks">
+                <div class="link1">
+                    <a href="https://docs.google.com/spreadsheets/d/1Y_yShlThbS6Xf5FYKD_tdi7lnbZCLxVdgbTHquAbOCM/edit?usp=sharing" target="_blank">Input Spreadsheet</a>
+                </div>
+                <div class="link2">
+                    <a href="https://docs.google.com/spreadsheets/d/1PkuL_qGRI7uxCQ48pZFw2FAgILq4e2hO0BpR2IIF5GU/edit?usp=sharing" target="_blank">Output Spreadsheet</a>
+                </div>
+            </div>
             <select id="SeasonTitle" name='seasondrop' onchange="fillSeason()">
                 <option disabled selected value = "">--Season--</option>
                 <option value = "ssp" >Spring</option>
@@ -132,14 +137,15 @@
             <select id="getClassNum" onclick="totalClasses()">
                 <option disabled selected value = "">--# Of Classes--</option>
                     <option value = "num1">10</option>
-                    <option value = "num2">12</option>
+                    <option value = "num2">11</option>
+                    <option value = "num4">12</option>
                     <option value = "num4">13</option>
-                    <option value = "num4">14</option>
-                    <option value = "num5">15</option>
-                    <option value = "num6">16</option>
-                    <option value = "num7">17</option>
-                    <option value = "num8">18</option>
-                    <option value = "num9">19</option>
+                    <option value = "num5">14</option>
+                    <option value = "num6">15</option>
+                    <option value = "num7">16</option>
+                    <option value = "num8">17</option>
+                    <option value = "num9">18</option>
+                    <option value = "num10">19</option>
                     <option value = "num10">20</option>
             </select>
         </div>
