@@ -155,14 +155,10 @@ function ProcessExcel() {
 var seasonSub = {'ssu':['summer1', 'summer2','summer3'],
                         'ssp':['spring1', 'spring2','spring3'],
                         'sw':['winter1', 'winter2','winter3'],
-                         'sf':['fall1','fall2','fall3']}
-                         
-                         
+                         'sf':['fall1','fall2','fall3']}                   
 var wsName = "";
-
 function fillSeason(){
     //console.log("Its working");
-    
     //console.log($("#SeasonTitle")[0].value);
     $("#getSeason").empty();
     if($("#SeasonTitle")[0].value!=null){
@@ -190,9 +186,7 @@ function getWsName(){
 }
 //////////////FIRST SCENARIO////////////////////////////
 //////fill up teacher dropdown//////////////
-
 var tchNameLst = []; 
-
 function fillTeachersName(){
     $("#TeacherSelect").empty();
     var selElement = document.getElementById('TeacherSelect');
@@ -219,48 +213,40 @@ var dayDrop;
 var subjectDrop;
 var timeDayLst = [];
 const unique = [];
-
+var teacherNum;
 function chkFilterClick(){
     subjectChose;
     dayChose = [];
     timeChose;
     teacherName;
+    tchNameLst = [];
+    teacherNum;
     subjectChose = $("#getSubject")[0].selectedOptions[0].innerText
     totalDays = document.getElementById("checkboxes").querySelectorAll("input")
     collectDays();
     timeChose = $("#getTime")[0].selectedOptions[0].innerText;
     teacherName = $("#TeacherSelect")[0].selectedOptions[0].innerText;
+    tchNameLst = Object.keys(final_teachers);
+    teacherNum = $("#TeacherSelect")[0].length
+    teacherNum = teacherNum-1;
     //console.log(subjectChose);
     //console.log(dayChose);
     //console.log(timeChose);
-    if(teacherName == "--Teachers--" || null){
-        if(!filterFlag && (subjectChose != "--Subjects--" || dayChose.length > 0 || timeChose != "--Time--" )){
-            //console.log("FilterFlag is False");
-            alert("Click Filter Or You won't Get The Result Expected.");
+    //console.log(tchNameLst.length);
+    //console.log(teacherNum);
+    if(subjectChose != "--Subjects--" || dayChose.length > 0 || timeChose != "--Time--" ){
+        //console.log("Part 1 crossed");
+        if(tchNameLst.length != teacherNum || (teacherName == "--Teachers--" || null)){
+            //console.log("Part 2 Crossed");
+            console.log(filterFlag);
+            if(!filterFlag){
+                //console.log("FilterFlag is False");
+                alert("Click Filter Or You won't Get The Result Expected.");
+            }
         }
     }
-}
-var FilterInChange;
-function chkFilterChange(){
-    subjectChose;
-    dayChose = [];
-    timeChose;
-    teacherName;
-    subjectChose = $("#getSubject")[0].selectedOptions[0].innerText
-    totalDays = document.getElementById("checkboxes").querySelectorAll("input")
-    collectDays();
-    timeChose = $("#getTime")[0].selectedOptions[0].innerText;
-    teacherName = $("#TeacherSelect")[0].selectedOptions[0].innerText;
-    //console.log(subjectChose);
-    //console.log(dayChose);
-    //console.log(timeChose);
-    //console.log(teacherName);
-    if(teacherName == "--Teachers--" || null){
-        if(!filterFlag && (subjectChose != "--Subjects--" || dayChose.length > 0 || timeChose != "--Time--" )){
-            //console.log("FilterFlag is False");
-            alert("Click Filter Or You won't Get The Result Expected.");
-            FilterInChange = "Do Not Execute";
-        }
+    else{
+        filterFlag = false;
     }
 }
 function fillOtherDrpdn(){
@@ -691,7 +677,6 @@ var passList;
 var filterFlag = false; 
 
 function filterWValues(){
-    filterFlag = true;
     subjectChose;
     timeChose;
     dayChose = [];
@@ -706,7 +691,7 @@ function filterWValues(){
     subjectsTeach = [];
     daysTeach = [];
     timesTeach = [];
-
+    filterFlag = true;
     for(var f=0; f<tchNameLst.length; f++){
         //console.log(tchNameLst[f]);
         if(subjectChose != "--Subjects--" || null){
@@ -837,7 +822,7 @@ function myFilter(){
 
 //////////TeacherAdd Based On Parameter//////
 function addSpecificTeachers(passList){
-    var selElement=document.getElementById('TeacherSelect')
+    var selElement=document.getElementById('TeacherSelect');
     $("#TeacherSelect").empty();
     optionTitle = document.createElement("option");
     
@@ -1013,45 +998,83 @@ function totalClasses(){
     var date1 = $("#startDate").val();
     var date2 = $("#endDate").val();
     var date3 = $("#noDateTxt").val();
-    //console.log(date3); 
     if((date1 != "" || null) && (date2!=""||null)){
-        //console.log("Yup");
         var nDSplit;
         var startDate = new Date(date1);
         var endDate = new Date(date2);
         var nDSplit2 = [];
         var ddRes;
-
-        var diffD1D2 =  Math.floor(( (Date.parse(date2)+1) - Date.parse(date1) ) / 86400000);
-        //console.log("Total Days:");
-        //console.log(diffD1D2);
-
+        var diffD1D2 =  Math.floor(( (Date.parse(date2)+1) - Date.parse(date1) ) / 86400000)
         if(date3.indexOf(',') > -1){
-            //console.log("Yes");
             nDSplit = date3.split(",");
             for(var nd=0; nd<nDSplit.length; nd++){
                 nDSplit2.push(nDSplit[nd].split("-"));  
             } 
         }
         else{
-            //console.log("No Date No");
+            console.log("No Date No");
             nDSplit2 = [];
         }
         var noClassDate = nDSplit2.length 
-        //console.log("Total No Class Days:");
-        //console.log(noClassDate);
         var weekendsCount = getSatSunCount(startDate, endDate);
-        //console.log("Total Weekends:");
-        //console.log(weekendsCount);
+        var selElementCount=$("#getClassNum option");
+        var numClassCount = [];
+        var sumNumClass = [];
         /////Math/////
         ddRes = diffD1D2 - (weekendsCount+noClassDate);
-        //console.log("Total Classes");
-        //console.log(ddRes); 
+        for(var s=1; s<selElementCount.length; s++){
+            if(selElementCount[s].innerText == ddRes){
+                numClassCount.push("=");
+                console.log("right on");
+                console.log(selElementCount[s].innerText + " = "+ddRes);
+                sumNumClass.push(ddRes);
+            }
+            else if(selElementCount[s].innerText < ddRes){
+                numClassCount.push(">");
+                console.log("more");
+                console.log(selElementCount[s].innerText + " < "+ddRes);
+                sumNumClass.push(selElementCount[s].innerText);
+            }
+            else if(selElementCount[s].innerText > ddRes){
+                numClassCount.push("<");
+                console.log("less");
+                console.log(selElementCount[s].innerText + " > "+ddRes);
+                sumNumClass.push(selElementCount[s].innerText);
+            }
+            else{
+                numClassCount.push("nope");
+                console.log("Error 401");
+                console.log(selElementCount[s].innerText + " idk "+ddRes);
+                sumNumClass.push(selElementCount[s].innerText);
+            }
+        }
         ////DrpDn//
-        optionVal = document.createElement("option");
-        optionVal.value = "tRes";
-        optionVal.text=ddRes;
-        optionVal.selected = true;
+        if(!numClassCount.includes("=")){
+            var selElement=document.getElementById('getClassNum');
+            optionVal = document.createElement("option");
+            optionVal.value = "tRes";
+            optionVal.text=ddRes;
+            optionVal.selected = true;
+            selElement.add(optionVal);
+        }
+        else{
+            var selElement=document.getElementById('getClassNum');
+            $("#getClassNum").empty();
+            optionTitle = document.createElement("option");
+            optionTitle.text='--# Of Classes--';
+            optionTitle.disabled = true;
+            selElement.add(optionTitle);
+            for(var c=0; c<sumNumClass.length; c++)
+            {   
+                optionVal = document.createElement("option");
+                optionVal.value = "num"+(c+1);
+                optionVal.text=sumNumClass[c];
+                if(ddRes == sumNumClass[c]){
+                    optionVal.selected = true;
+                }
+                selElement.add(optionVal);
+            }
+        }
     }
     else{
         if(date1 == "" || null){
