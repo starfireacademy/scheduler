@@ -1102,33 +1102,24 @@ function submitTable(){
     var xlsRows = [];
     var xlsHeader = ["Course", "Start Date", "End Date", "No Date","# of Classes", "Teacher", "Day", "Time"];
     var exampleDict = {};
- 
+    var changeSheetName = $("#SeasonTitle")[0].selectedOptions[0].innerText;
+    var seasonSubList = [];
     $("#resTable").find("tr").each(function(){
-
-    if(i>=1){
-    //console.log($(this)[0].children[1].innerText);
-    //console.log($(this)[0].children[2].innerText);
-    //console.log($(this)[0].children[3].innerText);
-    //console.log($(this)[0].children[4].innerText);
-    //console.log($(this)[0].children[5].innerText);
-    //console.log($(this)[0].children[6].innerText);
-    //console.log($(this)[0].children[7].innerText);
-    //console.log($(this)[0].children[8].innerText);
-
-    courseList.push(($(this)[0].children[1].innerText));
-    sdList.push(($(this)[0].children[2].innerText));
-    edList.push(($(this)[0].children[3].innerText));
-    ndList.push(($(this)[0].children[4].innerText));
-    classNumList.push(($(this)[0].children[5].innerText));
-    teachersList.push(($(this)[0].children[6].innerText));
-    dayList.push(($(this)[0].children[7].innerText));
-    timeList.push(($(this)[0].children[8].innerText));
-
-    //console.log(i);
-    }
+        if(i>=1){
+            seasonSubList.push(($(this)[0].children[0].innerText));
+            courseList.push(($(this)[0].children[1].innerText));
+            sdList.push(($(this)[0].children[2].innerText));
+            edList.push(($(this)[0].children[3].innerText));
+            ndList.push(($(this)[0].children[4].innerText));
+            classNumList.push(($(this)[0].children[5].innerText));
+            teachersList.push(($(this)[0].children[6].innerText));
+            dayList.push(($(this)[0].children[7].innerText));
+            timeList.push(($(this)[0].children[8].innerText));
+        //console.log(i);
+        }
     i= i+1;
     });
-    //console.log("courseList: "+courseList);
+    //console.log("SeasonList: "+seasonSubList);
     //console.log("sdList: "+sdList);
     //console.log("edList: "+edList);
     //console.log("ndList: "+ndList);
@@ -1136,8 +1127,9 @@ function submitTable(){
     //console.log("teachersList: "+teachersList);
     //console.log("dayList: "+dayList);
     //console.log("timeList: "+timeList); 
-
-    //////////////Save and Download///////////////////    
+    //////////////Save and Download///////////////////
+    tableDict["Sheet Name"] = changeSheetName;
+    tableDict["Season"] = seasonSubList;   
     tableDict["Course"] = courseList;
     tableDict["Start Date"] = sdList;
     tableDict["End Date"] = edList;
@@ -1146,9 +1138,8 @@ function submitTable(){
     tableDict["Teacher"] = teachersList;
     tableDict["Day"] = dayList;
     tableDict["Time"] = timeList;
-
-    //console.log("TableDict Format:");
-    //console.log(tableDict);
+    
+    console.log(tableDict);
 
     createXLSLFormatObj = tableDict;
     }
@@ -1165,6 +1156,7 @@ function readspreadsheet(){
     // Callback handler that will be called on success
     request.done(function (response, textStatus, jqXHR){
         // Log a message to the console
+
         //console.log("Hooray, it worked!");
         //console.log(response['row']);
         //console.log(textStatus);
@@ -1215,7 +1207,6 @@ function readspreadsheet(){
 
 function sheetToTable(){
     var tableCont = $('#resTable');
-
     var headSeason = $('#headRow th')[0].innerText;
     var headCourse = $('#headRow th')[1].innerText;
     var headStartDate = $('#headRow th')[2].innerText;
