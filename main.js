@@ -3,6 +3,8 @@ var createXLSLFormatObj = {};
 var databuf={};
 function readdata(){
     readspreadsheet();
+
+    //fetch('C:\\Users\\jayru\\PythonProject\\scheduler-master\\scheduler-master\\InputSpreadsheet.xlsx').then(function (res) {
     
     fetch('https://cors-anywhere.herokuapp.com/https://docs.google.com/spreadsheets/d/e/2PACX-1vS2ZzcLUznz2iZzYulR5Xm65iy-xg_YsFCUnLms3F_Glw7-PM-kBt8Ndas_D3t11-2KBhAWpdRpKz1G/pub?output=xlsx').then(function (res) {
     
@@ -13,18 +15,19 @@ function readdata(){
     .then(function (ab) {
         /* parse the data when it is received */
         var data = new Uint8Array(ab);
-        var workbook = XLSX.read(data, {
+        var workbook = XLS.read(data , {
             type: "array"
         });
-    
+        //console.log("Workbook:");
+        //console.log(workbook);
         /* *****************************************************************
         * DO SOMETHING WITH workbook: Converting Excel value to Json       *
         ********************************************************************/
         var first_sheet_name = workbook.SheetNames[0];
         /* Get worksheet */
         var worksheet = workbook.Sheets[first_sheet_name];
-    
-        _JsonData = XLSX.utils.sheet_to_json(worksheet, {raw: true });
+        //console.log(worksheet);
+        _JsonData = XLSX.utils.sheet_to_row_object_array(worksheet);
         /************************ End of conversion ************************/
     
         //console.log(_JsonData);
@@ -42,10 +45,14 @@ var day2 = [];
 var day3 = [];
 var day4 = [];
 var day5 = [];
+var day6 = [];
+var day7 = [];
 var subjects = [];
 var teachers = [];
 var r = 0;
 var time = 0;
+
+var dayNamelst = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 function ProcessExcel() {
     //Read all rows from First Sheet into an JSON array.
@@ -54,7 +61,7 @@ function ProcessExcel() {
     for (var i = 0; i < excelRows.length; i++) {
         //Add the data row.
         if(excelRows[i]["Teacher Name"]!=null) {
-            ////console.log("Fetching Teacher Names");
+            //////console.log("Fetching Teacher Names");
             teachers.push(excelRows[i]["Teacher Name"]);
             if ( r > 0) {
                 days = {
@@ -62,13 +69,15 @@ function ProcessExcel() {
                 'tuesday': day2,
                 'wednesday': day3,
                 'thursday': day4,
-                'friday': day5
+                'friday': day5,
+                'saturday': day6,
+                'sunday': day7
                 }
             
                 teacher_info = {'days':days,
                         'subs': subjects}
                 final_teachers[teachers[r - 1]] = teacher_info;
-                ////console.log("######"+subjects);
+                //////console.log("######"+subjects);
             }
             r = r + 1;
             time = 0;
@@ -78,36 +87,19 @@ function ProcessExcel() {
             day3 = [];
             day4 = [];
             day5 = [];
+            day6 = [];
+            day7 = [];
             subjects = [];
         }
         time = 0;
+        
+        for(var s=0; s<subNameLst.length; s++){
+            if (excelRows[i][subNameLst[s]]) {
+                subjects.push(subNameLst[s]);
+            }    
+        }
 
-        if (excelRows[i]["Scratch Coding"]) {
-            subjects.push('Scratch Coding');
-        }
-        if (excelRows[i]["Art & Design"]) {
-            subjects.push('Art & Design');
-        }
-        if (excelRows[i]["Electrical Eng."]) {
-            subjects.push('Electrical Engineering');
-        }
-        if (excelRows[i]["Python Coding"]) {
-            subjects.push('Python Coding');
-        }
-        if (excelRows[i]["Math K-2"]) {
-            subjects.push('Math K-2');
-        }
-        if (excelRows[i]["Math 3-6"]) {
-            subjects.push('Math 3-6');
-        }
-        if (excelRows[i]["Private Tutoring"]) {
-            subjects.push('Private Tutoring');
-        }
-        // //console.log("ScrtachJr"+excelRows[i]["ScratchJr. Coding"]);
-        if (excelRows[i]["ScratchJr. Coding"]) {
-            subjects.push('Scratch Jr. Coding');
-        }
-        // //console.log(excelRows[i]["Time of Day"]);
+        // ////console.log(excelRows[i]["Time of Day"]);
         if (excelRows[i]["Monday"]) {
             day1.push(excelRows[i]['Time of Day']);
         }
@@ -119,11 +111,15 @@ function ProcessExcel() {
         }
         if (excelRows[i]["Thursday"]) {
             day4.push(excelRows[i]["Time of Day"]);
-        }
-        
+        }        
         if (excelRows[i]["Friday"]){
             day5.push(excelRows[i]["Time of Day"]);
-
+        }
+        if (excelRows[i]["Saturday"]){
+            day6.push(excelRows[i]["Time of Day"]);
+        }
+        if (excelRows[i]["Sunday"]){
+            day7.push(excelRows[i]["Time of Day"]);
         }
     }
 
@@ -131,7 +127,9 @@ function ProcessExcel() {
             'tuesday': day2,
             'wednesday': day3,
             'thursday': day4,
-            'friday': day5}
+            'friday': day5,
+            'saturday': day6,
+            'sunday': day7}
     teacher_info = {'days':days,
                     'subs': subjects}
     final_teachers[teachers[teachers.length-1]] = teacher_info; 
@@ -142,11 +140,11 @@ function ProcessExcel() {
     fillSubjectsName();
     fillTeachersName();
     fillTime();
-    //console.log("sendButton for the win");
-    //console.log($("#sendButton"));
+    ////console.log("sendButton for the win");
+    ////console.log($("#sendButton"));
     
-    //console.log("This is The Cool Stuff:");
-    //console.log(final_teachers["Adrian Phillips "]["subs"]);
+    ////console.log("This is The Cool Stuff:");
+    ////console.log(final_teachers["Adrian Phillips "]["subs"]);
 }
 
 //////////////////////////////////////////
@@ -158,13 +156,13 @@ var seasonSub = {'ssu':['summer1', 'summer2','summer3'],
                          'sf':['fall1','fall2','fall3']}                   
 var wsName = "";
 function fillSeason(){
-    //console.log("Its working");
-    //console.log($("#SeasonTitle")[0].value);
+    ////console.log("Its working");
+    ////console.log($("#SeasonTitle")[0].value);
     $("#getSeason").empty();
     if($("#SeasonTitle")[0].value!=null){
         options = seasonSub[$("#SeasonTitle")[0].value];
         var selElement = document.getElementById('getSeason');
-        //console.log(options)
+        ////console.log(options)
         
         optionTitle = document.createElement("option");
         
@@ -216,7 +214,7 @@ const unique = [];
 var teacherNum;
 function chkFilterClick(){
     subjectChose;
-    dayChose = [];
+    //dayChose = [];
     timeChose;
     teacherName;
     tchNameLst = [];
@@ -229,18 +227,20 @@ function chkFilterClick(){
     tchNameLst = Object.keys(final_teachers);
     teacherNum = $("#TeacherSelect")[0].length
     teacherNum = teacherNum-1;
-    //console.log(subjectChose);
+    ////console.log(subjectChose);
+    //console.log("ChkFilterFlag Function: ");
     //console.log(dayChose);
-    //console.log(timeChose);
-    //console.log(tchNameLst.length);
-    //console.log(teacherNum);
+    ////console.log(timeChose);
+    ////console.log(tchNameLst.length);
+    ////console.log(teacherNum);
     if(subjectChose != "--Subjects--" || dayChose.length > 0 || timeChose != "--Time--" ){
-        //console.log("Part 1 crossed");
-        if(tchNameLst.length != teacherNum || (teacherName == "--Teachers--" || null)){
-            //console.log("Part 2 Crossed");
-            console.log(filterFlag);
+        ////console.log("Part 1 crossed");
+        if(tchNameLst.length != teacherNum || teacherName == "--Teachers--"){
+            ////console.log("Part 2 Crossed");
+            //console.log(filterFlag);
+            //console.log(dayChose);
             if(!filterFlag){
-                //console.log("FilterFlag is False");
+                ////console.log("FilterFlag is False");
                 alert("Click Filter Or You won't Get The Result Expected.");
             }
         }
@@ -250,20 +250,22 @@ function chkFilterClick(){
     }
 }
 function fillOtherDrpdn(){
-    //console.log(FilterInChange);
+    ////console.log(FilterInChange);
     subjectChose;
-    dayChose = [];
+    //dayChose = [];
     timeChose;
     teacherName;
     teacherName = $("#TeacherSelect")[0].selectedOptions[0].innerText;
-    //console.log("Other Stuff:")
-    //console.log(teacherName); 
-    if(teacherName != "--Teachers--" || null){
+    ////console.log("Other Stuff:")
+    ////console.log(teacherName); 
+    if(teacherName != "--Teachers--"){
+        //console.log("Not Resetting");
         dropSValues();
         dropDValues();
         dropTValues();
     }
     else{
+        //console.log("Gotta Reset!!!");
         fillSubjectsName();
         fillTeachersName();
         fillTime();
@@ -273,16 +275,16 @@ function fillOtherDrpdn(){
 
 function dropTValues(){
     timeChose = $("#getTime")[0].selectedOptions[0].innerText;
-    if(timeChose == "--Time--" || null){
+    if(timeChose == "--Time--"){
         for(var tD=0; tD < Object.values(final_teachers[teacherName]["days"]).length; tD++){
-            //console.log(tD);
+            ////console.log(tD);
             timeDayLst = (Object.values(final_teachers[teacherName]["days"])[tD]);
             for(var dN=0; dN < timeDayLst.length; dN++){
                 timeDrop.push(timeDayLst[dN]);
             }
         }
         const unique = Array.from(new Set(timeDrop));
-        //console.log(unique);
+        ////console.log(unique);
         var selElement=document.getElementById('getTime');
         $("#getTime").empty();
         optionTitle = document.createElement("option");
@@ -301,43 +303,47 @@ function dropTValues(){
     }
 }
 function dropDValues(){
+    //console.log("I am in DropDValues");
     dayDrop = final_teachers[teacherName]["days"];
-    //console.log("DUKBARA:");
-    //console.log(teacherName);
-    var selElement= document.getElementById("checkboxes").querySelectorAll("input");
+    ////console.log("DUKBARA:");
+    ////console.log(teacherName);
+    var selElement= document.getElementById("checkboxes").querySelectorAll("input");    
+
     totalDays = document.getElementById("checkboxes").querySelectorAll("input")
     collectDays();
-    for(var c=0; c<selElement.length; c++){
-        selElement[c].checked = false;
-        selElement[c].disabled = false;
-    }
+    //console.log("I am Old:");
+    //console.log(dayChose);
+    //console.log("Filter FlaG: ");
+    //console.log(filterFlag);
     if(dayChose.length <= 0){
         //console.log("pretty face");
         for(var i=0; i<selElement.length; i++)
         {   
             //console.log("################");
-            //console.log(selElement[i].value);
-            //console.log(dayDrop[selElement[i].value]);
+            ////console.log(selElement[i].value);
+            ////console.log(dayDrop[selElement[i].value]);
             if(dayDrop[selElement[i].value].length > 0){
+                //console.log("Covid you lost");
                 selElement[i].checked = true;
             }
             else{
+                //console.log("Covid you won");
                 selElement[i].disabled = true;
             }
         }
-        //console.log(dayDrop);
-        //console.log("###########");
+        ////console.log(dayDrop);
+        ////console.log("###########");
     }
 }
 function dropSValues(){
-    //console.log("Checking!!!");
-    //console.log($("#getSubject")[0].selectedOptions[0].innerText);
+    ////console.log("Checking!!!");
+    ////console.log($("#getSubject")[0].selectedOptions[0].innerText);
     subjectChose = $("#getSubject")[0].selectedOptions[0].innerText
     if(subjectChose == "--Subjects--" || null){
-        //console.log("SAWEE");
+        ////console.log("SAWEE");
         subjectDrop = $.unique(final_teachers[teacherName]["subs"]);
         const unique = Array.from(new Set(subjectDrop));
-        //console.log(unique);
+        ////console.log(unique);
         var selElement=document.getElementById('getSubject')
         $("#getSubject").empty();
         optionTitle = document.createElement("option");
@@ -356,14 +362,14 @@ function dropSValues(){
     }
     else
     {
-        //console.log("NO SAWEE");
+        ////console.log("NO SAWEE");
     }
 }
 /////////////////////////////
 
 //////////////Second SCENARIO////////////////////////////
 //////fill up subject dropdown//////////////
-var subNameLst = ["Scratch Coding", "Private Tutoring", "Art & Design", "C++", "Electrical Engineering", "Python Coding", "Math K-2", "Math 3-6", "Scratch Jr. Coding"];
+var subNameLst = ["Private Tutoring", "Art & Design", "Character Design", "Computer Music", "C++", "Scratch Coding", "Scratch Jr. Coding", "Animation in Scratch", "Python Coding", "Computational Thinking", "Electrical Engineering", "History - Hieroglyphs", "Languages - French", "Languages - Spanish", "Math K-2", "Math 3-6", "Math 7-9"];
 
 function fillSubjectsName(){
     $("#getSubject").empty();
@@ -399,24 +405,24 @@ function fillTeacherSubjects(){
     timeChose = $("#getTime")[0].selectedOptions[0].innerText;
     totalDays = document.getElementById("checkboxes").querySelectorAll("input")
     collectDays();
-    //console.log("Chosen Subject:");
-    //console.log(subjectChose); 
-    //console.log(dayChose);
+    ////console.log("Chosen Subject:");
+    ////console.log(subjectChose); 
+    ////console.log(dayChose);
     subjectsTeach = [];
     var selElement=document.getElementById('TeacherSelect');
     if(dayChose.length <=0 && timeChose == "--Time--"){
         for(var chk=0; chk < tchNameLst.length; chk++){
             chkTeachSubs = final_teachers[tchNameLst[chk]]["subs"]
             if(chkTeachSubs.includes(subjectChose)){
-                //console.log("yes it does Have it");
+                ////console.log("yes it does Have it");
                 subjectsTeach.push(tchNameLst[chk]);
             }
             else{
-                //console.log("Nope Not there");
+                ////console.log("Nope Not there");
             }
         }
-        //console.log("REasult Time:");
-        //console.log(subjectsTeach);
+        ////console.log("REasult Time:");
+        ////console.log(subjectsTeach);
 
         $("#TeacherSelect").empty();
         optionTitle = document.createElement("option");
@@ -455,9 +461,9 @@ function fillTime(){
             }
         }
     }
-    //console.log("TickTokResult:");
+    ////console.log("TickTokResult:");
     const unique = Array.from(new Set(tickTokTimes));
-    //console.log(unique);
+    ////console.log(unique);
 
     for(var i=0; i<unique.length; i++)
     {
@@ -471,6 +477,7 @@ function fillTime(){
 
 ///////////reset Days///////////
 function resetDays(){
+    //console.log("I am in reset mode.");
     var selElement= document.getElementById("checkboxes").querySelectorAll("input");
     for(var c=0; c<selElement.length; c++){
         selElement[c].checked = false;
@@ -497,9 +504,9 @@ function TimeDayManage(){
         }
         for(var i=0; i<selElement.length; i++)
         {   
-            //console.log("################");
-            //console.log(selElement[i].value);
-            //console.log(dayDrop[selElement[i].value]);
+            ////console.log("################");
+            ////console.log(selElement[i].value);
+            ////console.log(dayDrop[selElement[i].value]);
             if(dayDrop[selElement[i].value].length > 0){
                 selElement[i].checked = true;
             }
@@ -507,19 +514,19 @@ function TimeDayManage(){
                 selElement[i].disabled = true;
             }
         }
-        //console.log(dayDrop);
-        //console.log("###########");
+        ////console.log(dayDrop);
+        ////console.log("###########");
     }
     if(timeChose == "--Time--" || null){
         for(var tD=0; tD < Object.values(final_teachers[teacherName]["days"]).length; tD++){
-            //console.log(tD);
+            ////console.log(tD);
             timeDayLst = (Object.values(final_teachers[teacherName]["days"])[tD]);
             for(var dN=0; dN < timeDayLst.length; dN++){
                 timeDrop.push(timeDayLst[dN]);
             }
         }
         const unique = Array.from(new Set(timeDrop));
-        //console.log(unique);
+        ////console.log(unique);
         
         $("#getTime").empty();
         optionTitle = document.createElement("option");
@@ -542,7 +549,7 @@ var dayMatch = [];
 
 function DayManage(){
     timeChose;
-    dayChose = [];
+    //dayChose = [];
     teacherName;
     timeChose = $("#getTime")[0].selectedOptions[0].innerText;
     var selElementTime=document.getElementById('getTime');
@@ -550,48 +557,48 @@ function DayManage(){
     totalDays = document.getElementById("checkboxes").querySelectorAll("input")
     collectDays();
     teacherName = $("#TeacherSelect")[0].selectedOptions[0].innerText;
-    //console.log("Time that is chosen");
-    //console.log(timeChose);
+    ////console.log("Time that is chosen");
+    ////console.log(timeChose);
     if(teacherName != "--Teachers--" && timeChose != "--Time--" ){
         //var dayFlag = true;
         //var timeFlag = true;
-        //console.log("Start Mismatch Discovery");
+        ////console.log("Start Mismatch Discovery");
         for(var d=0; d< dayChose.length; d++){
-            //console.log("Checking Days:");
-            //console.log(teacherName);
-            //console.log(dayChose[d]);
+            ////console.log("Checking Days:");
+            ////console.log(teacherName);
+            ////console.log(dayChose[d]);
             teacherDay = final_teachers[teacherName]["days"][dayChose[d]];
-            //console.log(teacherDay);
+            ////console.log(teacherDay);
             if(teacherDay.includes(timeChose)){
-                //console.log("Confirmed.");
+                ////console.log("Confirmed.");
             }
             else{
                 //dayFlag = false;  
-                //console.log("No.");
+                ////console.log("No.");
                 dayMatch.push(dayChose[d]);
                 }
         }
 
         for(var i=0; i<selElementDay.length; i++)
         {   
-            //console.log("################");
-            //console.log(selElementDay[i].value);
-            //console.log(dayMatch.includes(selElementDay[i].value));
+            ////console.log("################");
+            ////console.log(selElementDay[i].value);
+            ////console.log(dayMatch.includes(selElementDay[i].value));
             if(dayMatch.includes(selElementDay[i].value)){
                 selElementDay[i].checked = false; 
                 selElementDay[i].disabled = true;
             }
                
         }
-        //console.log("MisMatches: ");
-        //console.log(dayMatch);
+        ////console.log("MisMatches: ");
+        ////console.log(dayMatch);
     }
     
 }
 
 function TimeManage(){
     timeChose;
-    dayChose = [];
+    //dayChose = [];
     timeChose = $("#getTime")[0].selectedOptions[0].innerText;
     var selElementTime=document.getElementById('getTime');
     var selElementDay= document.getElementById("checkboxes").querySelectorAll("input");
@@ -604,9 +611,9 @@ function TimeManage(){
         }
         for(var i=0; i<selElement.length; i++)
         {   
-            //console.log("################");
-            //console.log(selElement[i].value);
-            //console.log(dayDrop[selElement[i].value]);
+            ////console.log("################");
+            ////console.log(selElement[i].value);
+            ////console.log(dayDrop[selElement[i].value]);
             if(dayDrop[selElement[i].value].length > 0){
                 selElement[i].checked = true;
             }
@@ -614,19 +621,19 @@ function TimeManage(){
                 selElement[i].disabled = true;
             }
         }
-        //console.log(dayDrop);
-        //console.log("###########");
+        ////console.log(dayDrop);
+        ////console.log("###########");
     }
     if(timeChose == "--Time--" || null){
         for(var tD=0; tD < Object.values(final_teachers[teacherName]["days"]).length; tD++){
-            //console.log(tD);
+            ////console.log(tD);
             timeDayLst = (Object.values(final_teachers[teacherName]["days"])[tD]);
             for(var dN=0; dN < timeDayLst.length; dN++){
                 timeDrop.push(timeDayLst[dN]);
             }
         }
         const unique = Array.from(new Set(timeDrop));
-        //console.log(unique);
+        ////console.log(unique);
         
         $("#getTime").empty();
         optionTitle = document.createElement("option");
@@ -649,6 +656,7 @@ function TimeManage(){
 
 ///filter//////////////
 function collectDays(){
+    dayChose = [];
     for(var c=0; c <totalDays.length; c++){
             if(totalDays[c].checked){
                 dayChose.push(totalDays[c].value);
@@ -679,48 +687,49 @@ var filterFlag = false;
 function filterWValues(){
     subjectChose;
     timeChose;
-    dayChose = [];
+    //dayChose = [];
     subjectChose = $("#getSubject")[0].selectedOptions[0].innerText;
     timeChose = $("#getTime")[0].selectedOptions[0].innerText;
     totalDays = document.getElementById("checkboxes").querySelectorAll("input")
     collectDays();
-    //console.log(final_teachers);
-    //console.log(subjectChose);
-    //console.log(dayChose);
-    //console.log(timeChose);
+    ////console.log(final_teachers);
+    ////console.log(subjectChose);
+    ////console.log(dayChose);
+    ////console.log(timeChose);
     subjectsTeach = [];
     daysTeach = [];
     timesTeach = [];
     filterFlag = true;
     for(var f=0; f<tchNameLst.length; f++){
-        //console.log(tchNameLst[f]);
+        ////console.log(tchNameLst[f]);
         if(subjectChose != "--Subjects--" || null){
             chkTeachSubs = final_teachers[tchNameLst[f]]["subs"]
             if(chkTeachSubs.includes(subjectChose)){
-                //console.log(chkTeachSubs);
-                //console.log("Yes We Got It");
+                ////console.log(chkTeachSubs);
+                ////console.log("Yes We Got It");
                 subjectsTeach.push(tchNameLst[f]);
             }
             else{
-                //console.log(chkTeachSubs);
-                //console.log("Nah Man Cannot Include");
+                ////console.log(chkTeachSubs);
+                ////console.log("Nah Man Cannot Include");
             }
         }
         if(dayChose.length > 0){
             var dayFlag = true;
             var timeFlag = true;
             for(var d=0; d< dayChose.length; d++){
-                //console.log("Checking Days:");
+                ////console.log("Checking Days:");
                 teacherDay = final_teachers[tchNameLst[f]]["days"][dayChose[d]];
                 if(teacherDay.length > 0)
-                    console.log("Yes.")
+                    console.log("Yes. "+dayChose[d]);
                 else{
                     dayFlag = false;  
                     //console.log("No.");
                 }
-                //console.log("Checking Time for Those Days");
+                ////console.log("Checking Time for Those Days");
                 dayIncluded = final_teachers[tchNameLst[f]]["days"][dayChose[d]];
-                if(timeChose != "--Time--" || null){
+                if(timeChose != "--Time--"){
+                    ////console.log("Speed Up");
                     if(dayIncluded.includes(timeChose)){
                         //console.log("Yup Time is there");
                     }
@@ -730,7 +739,7 @@ function filterWValues(){
                     }
                 }
                 else{
-                    //console.log("Not there");
+                    ////console.log("Not there");
                     timeFlag = false;
                 }
             }
@@ -745,17 +754,17 @@ function filterWValues(){
             dayIncluded = Object.keys(final_teachers[tchNameLst[f]]["days"]);
             var timeIncluded = [];
             if(timeChose != "--Time--" || null){
-                //console.log("Kuddooies");
-                //console.log(dayIncluded);
+                ////console.log("Kuddooies");
+                ////console.log(dayIncluded);
                 for(var k=0; k < dayIncluded.length; k++){
                     timeIncluded = final_teachers[tchNameLst[f]]["days"][dayIncluded[k]];
-                    //console.log(timeIncluded);
+                    ////console.log(timeIncluded);
                     if(timeIncluded.includes(timeChose)){
-                        //console.log("I have it");
+                        ////console.log("I have it");
                         timesTeach.push(tchNameLst[f]);
                     }
                     else{
-                        //console.log("Time Flies Away");
+                        ////console.log("Time Flies Away");
                     }
                 }
             }
@@ -764,29 +773,29 @@ function filterWValues(){
     //const uniqueSub = Array.from(new Set(subjectsTeach));
     //const uniqueDay = Array.from(new Set(daysTeach));
     const uniqueTime = Array.from(new Set(timesTeach));
-    //console.log("Filteration Succeeded--: ");
-    //console.log("Subjects: "+subjectChose);
-    //console.log(subjectsTeach);
-    //console.log("Days: "+dayChose);
-    //console.log(daysTeach);
-    //console.log("Times: "+timeChose);
-    //console.log(uniqueTime);
+    ////console.log("Filteration Succeeded--: ");
+    ////console.log("Subjects: "+subjectChose);
+    ////console.log(subjectsTeach);
+    ////console.log("Days: "+dayChose);
+    ////console.log(daysTeach);
+    ////console.log("Times: "+timeChose);
+    ////console.log(uniqueTime);
 
     choicesToFilter = [];
     choicesStringValues = [];
 
     if(subjectsTeach.length > 0){
-        //console.log("I got it from my daddy");
+        //console.log("I got the subjects");
         choicesToFilter.push(subjectsTeach);
         choicesStringValues.push("#getSubject");
     }
     if(daysTeach.length > 0){
-        //console.log("I got it from my daddy");
+        //console.log("I got the days");
         choicesToFilter.push(daysTeach);
         choicesStringValues.push("#checkboxes");
     }
     if(uniqueTime.length > 0){
-        //console.log("I got it from my daddy");
+        //console.log("I got the time");
         choicesToFilter.push(uniqueTime);
         choicesStringValues.push("#getTime");
     }
@@ -794,30 +803,29 @@ function filterWValues(){
 }
 function myFilter(){
     passList = [];
-    //console.log(choicesToFilter);
+    ////console.log(choicesToFilter);
     if(choicesToFilter.length > 0 && choicesToFilter.length < 2){
-        //console.log("No.1");
+        ////console.log("No.1");
         let teachersFilter = choicesToFilter[0]; 
         passList = teachersFilter;
         addSpecificTeachers(passList);   
     }
     if(choicesToFilter.length > 1 && choicesToFilter.length < 3){
-        //console.log("No.2");
+        ////console.log("No.2");
         let teachersFilter = choicesToFilter[0].filter(x => choicesToFilter[1].includes(x));
-        //console.log("Combined Combiner Combination: ");
-        //console.log(teachersFilter);
+        ////console.log("Combined Combiner Combination: ");
+        ////console.log(teachersFilter);
         passList = teachersFilter;
         addSpecificTeachers(passList);
     }
     if(choicesToFilter.length > 2 && choicesToFilter.length < 4){
-        //console.log("No.3");
+        ////console.log("No.3");
         let teachersFilter = choicesToFilter[0].filter(x => choicesToFilter[1].includes(x) && choicesToFilter[2].includes(x));
-        //console.log("Combined Combiner Combination: ");
-        //console.log(teachersFilter);
+        ////console.log("Combined Combiner Combination: ");
+        ////console.log(teachersFilter);
         passList = teachersFilter;
         addSpecificTeachers(passList);
-    }
-    
+    }  
 }
 
 //////////TeacherAdd Based On Parameter//////
@@ -859,11 +867,11 @@ function myAdd() {
     "</td><td>"+$("#getGrade")[0].selectedOptions[0].innerText+
     "</td> <td id=deleter> <input type=button value=X onclick=deleteRow(this)> </td> </tr>");
 
-    //console.log("HAKUNA MATATA: ");
-    //console.log($("#resTable"));
-    //console.log("HULULULU");
-    //console.log($('#resTable'));
-    //console.log("##########");
+    ////console.log("HAKUNA MATATA: ");
+    ////console.log($("#resTable"));
+    ////console.log("HULULULU");
+    ////console.log($('#resTable'));
+    ////console.log("##########");
 
     counter=counter+1;
 
@@ -879,7 +887,7 @@ function findDays(){
         }
         else{    
         dayChkd=dayChkd+","+$(this).val();
-        //console.log(dayChkd);
+        ////console.log(dayChkd);
         }
     }
 
@@ -896,17 +904,17 @@ function deleteRow(r) {
 ////////Disable the send button////////////
 function sendButtonCondition(){
     var sendButton = $("#sendButton")[0];
-    //console.log($("#sendButton")[0]);
-    ////console.log(document.getElementById('dataRow1'));
-    //console.log($("#resTable tr"));
+    ////console.log($("#sendButton")[0]);
+    //////console.log(document.getElementById('dataRow1'));
+    ////console.log($("#resTable tr"));
     var tableTR = $("#resTable tr");
     if(tableTR.length > 1){
         sendButton.disabled = false;
-        //console.log("yippee");
+        ////console.log("yippee");
     }
     else{
         sendButton.disabled = true;
-        //console.log("No yippee");
+        ////console.log("No yippee");
     }
 }
 //////////////////////////
@@ -921,13 +929,13 @@ var comCounter = 0;
 var countResetFlag = false;
 function noDateTxt(){
     noDateInput  = document.getElementById("noDateTxt");
-    //console.log(noDateInput);
+    ////console.log(noDateInput);
     if(noDateInput.style.display === "block"){
-        //console.log("hidden");
+        ////console.log("hidden");
         noDateInput.style.display = "none";
     } 
     else{
-        //console.log("Unhidden");
+        ////console.log("Unhidden");
         noDateInput.style.display = "block";
     }
 }
@@ -936,15 +944,15 @@ function dateAdd(){
     noDateVal = document.getElementById("noDate");
     noDateTxtVal = document.getElementById("noDateTxt");
     commaCount = ($("#noDateTxt").val().match(/,/g)||[]).length;
-    //console.log(noDateVal.value);
-    //console.log(commaCount);
-    //console.log("#@@@@@#");
-    //console.log(comCounter);
-    //console.log(countResetFlag);
+    ////console.log(noDateVal.value);
+    ////console.log(commaCount);
+    ////console.log("#@@@@@#");
+    ////console.log(comCounter);
+    ////console.log(countResetFlag);
     if (commaCount != comCounter) { 
         removedNoDates = noDateTxtVal.value.split(",");
-        //console.log("Over there");
-        //console.log(removedNoDates);
+        ////console.log("Over there");
+        ////console.log(removedNoDates);
         /*for(var r=0; r<removedNoDates.length; r++){
             multipleNoDates.push(removedNoDates[r]);
         }*/
@@ -952,28 +960,28 @@ function dateAdd(){
         multipleNoDates.push(noDateVal.value);
         countResetFlag = true;
         comCounter = commaCount+0;
-        //console.log("Deducted and Resseted");
-        //console.log(comCounter);
+        ////console.log("Deducted and Resseted");
+        ////console.log(comCounter);
     }
     else{
-        //console.log("Over Here");
+        ////console.log("Over Here");
         countResetFlag = false;
         multipleNoDates.push(noDateVal.value);
     }
                 ///////////////////////
     if(multipleNoDates.length>0 && multipleNoDates.length<2){
-        //console.log("In here With One");
+        ////console.log("In here With One");
         noDateTxtVal.value = multipleNoDates[0];
     }
     else{
         let str = multipleNoDates.join(",");
-        //console.log("In here with multiple");
+        ////console.log("In here with multiple");
         noDateTxtVal.value = str;
         if(!countResetFlag){
             comCounter = comCounter+1;
         }
         else{
-            //console.log("Not increased");
+            ////console.log("Not increased");
         }
     } 
 }
@@ -1012,7 +1020,7 @@ function totalClasses(){
             } 
         }
         else{
-            console.log("No Date No");
+            //console.log("No Date No");
             nDSplit2 = [];
         }
         var noClassDate = nDSplit2.length 
@@ -1025,26 +1033,26 @@ function totalClasses(){
         for(var s=1; s<selElementCount.length; s++){
             if(selElementCount[s].innerText == ddRes){
                 numClassCount.push("=");
-                console.log("right on");
-                console.log(selElementCount[s].innerText + " = "+ddRes);
+                //console.log("right on");
+                //console.log(selElementCount[s].innerText + " = "+ddRes);
                 sumNumClass.push(ddRes);
             }
             else if(selElementCount[s].innerText < ddRes){
                 numClassCount.push(">");
-                console.log("more");
-                console.log(selElementCount[s].innerText + " < "+ddRes);
+                //console.log("more");
+                //console.log(selElementCount[s].innerText + " < "+ddRes);
                 sumNumClass.push(selElementCount[s].innerText);
             }
             else if(selElementCount[s].innerText > ddRes){
                 numClassCount.push("<");
-                console.log("less");
-                console.log(selElementCount[s].innerText + " > "+ddRes);
+                //console.log("less");
+                //console.log(selElementCount[s].innerText + " > "+ddRes);
                 sumNumClass.push(selElementCount[s].innerText);
             }
             else{
                 numClassCount.push("nope");
-                console.log("Error 401");
-                console.log(selElementCount[s].innerText + " idk "+ddRes);
+                //console.log("Error 401");
+                //console.log(selElementCount[s].innerText + " idk "+ddRes);
                 sumNumClass.push(selElementCount[s].innerText);
             }
         }
@@ -1115,18 +1123,18 @@ function submitTable(){
             teachersList.push(($(this)[0].children[6].innerText));
             dayList.push(($(this)[0].children[7].innerText));
             timeList.push(($(this)[0].children[8].innerText));
-        //console.log(i);
+        ////console.log(i);
         }
     i= i+1;
     });
-    //console.log("SeasonList: "+seasonSubList);
-    //console.log("sdList: "+sdList);
-    //console.log("edList: "+edList);
-    //console.log("ndList: "+ndList);
-    //console.log("classNumList: "+classNumList);
-    //console.log("teachersList: "+teachersList);
-    //console.log("dayList: "+dayList);
-    //console.log("timeList: "+timeList); 
+    ////console.log("SeasonList: "+seasonSubList);
+    ////console.log("sdList: "+sdList);
+    ////console.log("edList: "+edList);
+    ////console.log("ndList: "+ndList);
+    ////console.log("classNumList: "+classNumList);
+    ////console.log("teachersList: "+teachersList);
+    ////console.log("dayList: "+dayList);
+    ////console.log("timeList: "+timeList); 
     //////////////Save and Download///////////////////
     tableDict["Sheet Name"] = changeSheetName;
     tableDict["Season"] = seasonSubList;   
@@ -1139,7 +1147,7 @@ function submitTable(){
     tableDict["Day"] = dayList;
     tableDict["Time"] = timeList;
     
-    console.log(tableDict);
+    //console.log(tableDict);
 
     createXLSLFormatObj = tableDict;
     }
@@ -1149,6 +1157,7 @@ function submitTable(){
 
 function readspreadsheet(){
     request = $.ajax({
+        //url: "C:\\Users\\jayru\\PythonProject\\scheduler-master\\scheduler-master\\OutputSpreadsheet.xlsx", 
         url: "https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbzwo8xoGY2TYAc8fShl5ZskV9XgtSGivMyVDG71xyuhb917H-xz/exec",
         type: "get"    
     });
@@ -1157,10 +1166,10 @@ function readspreadsheet(){
     request.done(function (response, textStatus, jqXHR){
         // Log a message to the console
 
-        //console.log("Hooray, it worked!");
-        //console.log(response['row']);
-        //console.log(textStatus);
-        //console.log(jqXHR);
+        ////console.log("Hooray, it worked!");
+        ////console.log(response['row']);
+        ////console.log(textStatus);
+        ////console.log(jqXHR);
         var data = response['row'];
         var dict = {};
         var valVal;
@@ -1169,15 +1178,15 @@ function readspreadsheet(){
         for(var jD=1; jD < data.length; jD++){
             for(var hD=0; hD < data[0].length; hD++){
                 keyVal = data[0][hD];
-                //console.log(keyVal);
+                ////console.log(keyVal);
                 valVal = data[jD][hD];
-                //console.log(valVal);
+                ////console.log(valVal);
                 dict[keyVal] = valVal;
             }
             _JsonData.push(dict);
         }
-        //console.log("my Json data from XLS: ");
-        //console.log(_JsonData);
+        ////console.log("my Json data from XLS: ");
+        ////console.log(_JsonData);
         sheetToTable();
     });
 
@@ -1193,7 +1202,7 @@ function readspreadsheet(){
     // Callback handler that will be called regardless
     // if the request failed or succeeded
     request.always(function () {
-        //console.log("I m in here");
+        ////console.log("I m in here");
         // Reenable the inputs
        // $inputs.prop("disabled", false);
     });
@@ -1221,137 +1230,137 @@ function sheetToTable(){
     var appendRowLast = "</tr>";
 
     if(_JsonData.length!=0){
-        //console.log("Fetching!!!!:::");
-        //console.log(_JsonData.length);
-        ////console.log(tableCont);
-        //console.log(headCourse);
-        //console.log(headStartDate);
-        //console.log(headEndDate);
-        //console.log(headNoDate);
+        ////console.log("Fetching!!!!:::");
+        ////console.log(_JsonData.length);
+        //////console.log(tableCont);
+        ////console.log(headCourse);
+        ////console.log(headStartDate);
+        ////console.log(headEndDate);
+        ////console.log(headNoDate);
         
 
         //tableCont.append("<tr><td>A</td><td>b</td><td>c</td><td>d</td><td>e</td><td>f</td><td>g</td><td>h</td><td>i</td><td>j</td></tr>");
         //tableCont.append("<tr><td>A</td><td>b</td><td>c</td><td>d</td><td>e</td><td>f</td><td>g</td><td>h</td><td>i</td><td>j</td></tr>");
-        //console.log("Test");
-        //console.log(_JsonData[0][headCourse]);
+        ////console.log("Test");
+        ////console.log(_JsonData[0][headCourse]);
         for(var d=0; d<=_JsonData.length-1; d++){
-           //console.log(d);
-           //console.log(_JsonData[d]);
+           ////console.log(d);
+           ////console.log(_JsonData[d]);
            /////Season/////////
            if(_JsonData[d][headSeason]!=null){
-                //console.log("Yes Season is there:");
-                //console.log(_JsonData[d][headSeason]);
+                ////console.log("Yes Season is there:");
+                ////console.log(_JsonData[d][headSeason]);
                 appendRowFirst = appendRowFirst.concat("<td>"+_JsonData[d][headSeason]+"</td>");
                 //tableCont.append("<tr><td>a</td><td>Yolo</td><td>c</td><td>d</td><td>e</td><td>f</td><td>g</td><td>h</td><td>i</td><td>j</td></tr>");
             }
             else{
-                //console.log("KJHFUEHUENoPE");
+                ////console.log("KJHFUEHUENoPE");
                 appendRowFirst = appendRowFirst.concat("<td></td>");
             }
             /////Course/////////
             if(_JsonData[d][headCourse]!=null){
-                //console.log("Yes Course is there:");
-                //console.log(_JsonData[d][headCourse]);
+                ////console.log("Yes Course is there:");
+                ////console.log(_JsonData[d][headCourse]);
                 appendRowFirst = appendRowFirst.concat("<td>"+_JsonData[d][headCourse]+"</td>");
-                //console.log("AdddingSTUFF:");  
-                //console.log(appendRowFirst);
+                ////console.log("AdddingSTUFF:");  
+                ////console.log(appendRowFirst);
                 //tableCont.append("<tr><td>a</td><td>Yolo</td><td>c</td><td>d</td><td>e</td><td>f</td><td>g</td><td>h</td><td>i</td><td>j</td></tr>");
             }
             else{
-                //console.log("KJHFUEHUE");
+                ////console.log("KJHFUEHUE");
                 appendRowFirst = appendRowFirst.concat("<td></td>");
             }
             /////Start Date/////////
             if(_JsonData[d][headStartDate]!=null){
-                //console.log("Yes Start Date is there:");
-                //console.log(_JsonData[d][headStartDate]);
+                ////console.log("Yes Start Date is there:");
+                ////console.log(_JsonData[d][headStartDate]);
                 appendRowFirst = appendRowFirst.concat("<td>"+_JsonData[d][headStartDate].split("T")[0]+"</td>");
                 //tableCont.append("<tr><td>a</td><td>Yolo</td><td>c</td><td>d</td><td>e</td><td>f</td><td>g</td><td>h</td><td>i</td><td>j</td></tr>");
             }
             else{
-                //console.log("KJHFUEHUE");
+                ////console.log("KJHFUEHUE");
                 appendRowFirst = appendRowFirst.concat("<td></td>");
             }
             /////End Date/////////
             if(_JsonData[d][headEndDate]!=null){
-                //console.log("Yes End Date is there:");
-                //console.log(_JsonData[d][headEndDate]);
+                ////console.log("Yes End Date is there:");
+                ////console.log(_JsonData[d][headEndDate]);
                 appendRowFirst = appendRowFirst.concat("<td>"+_JsonData[d][headEndDate].split("T")[0]+"</td>");
                 //tableCont.append("<tr><td>a</td><td>Yolo</td><td>c</td><td>d</td><td>e</td><td>f</td><td>g</td><td>h</td><td>i</td><td>j</td></tr>");
             }
             else{
-                //console.log("KJHFUEHUE");
+                ////console.log("KJHFUEHUE");
                 appendRowFirst = appendRowFirst.concat("<td></td>");
             }
             /////No Class Date/////////
             if(_JsonData[d][headNoDate]!=null){
-                //console.log("Yes No Class Date is there:");
-                //console.log(_JsonData[d][headNoDate]);
+                ////console.log("Yes No Class Date is there:");
+                ////console.log(_JsonData[d][headNoDate]);
                 appendRowFirst = appendRowFirst.concat("<td>"+_JsonData[d][headNoDate].split("T")[0]+"</td>");
                 //tableCont.append("<tr><td>a</td><td>Yolo</td><td>c</td><td>d</td><td>e</td><td>f</td><td>g</td><td>h</td><td>i</td><td>j</td></tr>");
             }
             else{
-                //console.log("KJHFUEHUE");
+                ////console.log("KJHFUEHUE");
                 appendRowFirst = appendRowFirst.concat("<td></td>");
             }
             /////Class Num/////////
             if(_JsonData[d][headClassNum]!=null){
-                //console.log("Yes Class Num is there:");
-                //console.log(_JsonData[d][headClassNum]);
+                ////console.log("Yes Class Num is there:");
+                ////console.log(_JsonData[d][headClassNum]);
                 appendRowFirst = appendRowFirst.concat("<td>"+_JsonData[d][headClassNum]+"</td>");
                 //tableCont.append("<tr><td>a</td><td>Yolo</td><td>c</td><td>d</td><td>e</td><td>f</td><td>g</td><td>h</td><td>i</td><td>j</td></tr>");
             }
             else{
-                //console.log("KJHFUEHUE");
+                ////console.log("KJHFUEHUE");
                 appendRowFirst = appendRowFirst.concat("<td></td>");
             }
             /////Teacher/////////
             if(_JsonData[d][headTeacher]!=null){
-                //console.log("Yes Teacher is there:");
-                //console.log(_JsonData[d][headTeacher]);
+                ////console.log("Yes Teacher is there:");
+                ////console.log(_JsonData[d][headTeacher]);
                 appendRowFirst = appendRowFirst.concat("<td>"+_JsonData[d][headTeacher]+"</td>");
                 //tableCont.append("<tr><td>a</td><td>Yolo</td><td>c</td><td>d</td><td>e</td><td>f</td><td>g</td><td>h</td><td>i</td><td>j</td></tr>");
             }
             else{
-                //console.log("KJHFUEHUE");
+                ////console.log("KJHFUEHUE");
                 appendRowFirst = appendRowFirst.concat("<td></td>");
             }
             /////Day/////////
             if(_JsonData[d][headDay]!=null){
-                //console.log("Yes Days is there:");
-                //console.log(_JsonData[d][headDay]);
+                ////console.log("Yes Days is there:");
+                ////console.log(_JsonData[d][headDay]);
                 appendRowFirst = appendRowFirst.concat("<td>"+_JsonData[d][headDay]+"</td>");
                 //tableCont.append("<tr><td>a</td><td>Yolo</td><td>c</td><td>d</td><td>e</td><td>f</td><td>g</td><td>h</td><td>i</td><td>j</td></tr>");
             }
             else{
-                //console.log("KJHFUEHUE");
+                ////console.log("KJHFUEHUE");
                 appendRowFirst = appendRowFirst.concat("<td></td>");
             }
             /////Time/////////
             if(_JsonData[d][headTime]!=null){
-                //console.log("Yes Time is there:");
-                //console.log(_JsonData[d][headTime]);
+                ////console.log("Yes Time is there:");
+                ////console.log(_JsonData[d][headTime]);
                 appendRowFirst = appendRowFirst.concat("<td>"+_JsonData[d][headTime]+"</td>");
                 //tableCont.append("<tr><td>a</td><td>Yolo</td><td>c</td><td>d</td><td>e</td><td>f</td><td>g</td><td>h</td><td>i</td><td>j</td></tr>");
             }
             else{
-                //console.log("KJHFUEHUE");
+                ////console.log("KJHFUEHUE");
                 appendRowFirst = appendRowFirst.concat("<td></td>");
             }
             /////Grade/////////
             if(_JsonData[d][headGrade]!=null){
-                //console.log("Yes Grade is there:");
-                //console.log(_JsonData[d][headGrade]);
+                ////console.log("Yes Grade is there:");
+                ////console.log(_JsonData[d][headGrade]);
                 appendRowFirst = appendRowFirst.concat("<td>"+_JsonData[d][headGrade]+"</td>");
                 //tableCont.append("<tr><td>a</td><td>Yolo</td><td>c</td><td>d</td><td>e</td><td>f</td><td>g</td><td>h</td><td>i</td><td>j</td></tr>");
             }
             else{
-                //console.log("KJHFUEHUE");
+                ////console.log("KJHFUEHUE");
                 appendRowFirst = appendRowFirst.concat("<td></td>");
             }
             appendRowFirst = appendRowFirst.concat("<td id=deleter> <input type=button value=X onclick=deleteRow(this)></td>")
             appendRowFirst = appendRowFirst.concat(appendRowLast);
-            //console.log(appendRowFirst);
+            ////console.log(appendRowFirst);
             
             tableCont.append(appendRowFirst);
 
