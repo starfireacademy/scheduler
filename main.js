@@ -135,6 +135,8 @@ function ProcessExcel() {
     final_teachers[teachers[teachers.length-1]] = teacher_info; 
 
     tchNameLst = Object.keys(final_teachers);
+    console.log("Here s thy data!");
+    console.log(final_teachers);
     
     sendButtonCondition();
     fillSubjectsName();
@@ -250,6 +252,7 @@ function chkFilterClick(){
     }
 }
 function fillOtherDrpdn(){
+    dayMatch = [];
     ////console.log(FilterInChange);
     subjectChose;
     //dayChose = [];
@@ -263,6 +266,7 @@ function fillOtherDrpdn(){
         dropSValues();
         dropDValues();
         dropTValues();
+        //DayManage();
     }
     else{
         //console.log("Gotta Reset!!!");
@@ -274,8 +278,21 @@ function fillOtherDrpdn(){
 }
 
 function dropTValues(){
+    console.log("I am In DropTValues");
+    timeChose;
+    totalDays = document.getElementById("checkboxes").querySelectorAll("input")
+    collectDays();
     timeChose = $("#getTime")[0].selectedOptions[0].innerText;
-    if(timeChose == "--Time--"){
+    timeDayLst = [];
+    teacherName;
+    teacherName = $("#TeacherSelect")[0].selectedOptions[0].innerText;
+    subjectChose = $("#getSubject")[0].selectedOptions[0].innerText
+    console.log("Checking for: ");
+    console.log(dayChose);
+    console.log("Filtering:");
+    console.log(filterFlag);
+    if(timeChose == "--Time--" && dayChose.length <= 0){
+        console.log("Normal Times.")
         for(var tD=0; tD < Object.values(final_teachers[teacherName]["days"]).length; tD++){
             ////console.log(tD);
             timeDayLst = (Object.values(final_teachers[teacherName]["days"])[tD]);
@@ -284,7 +301,7 @@ function dropTValues(){
             }
         }
         const unique = Array.from(new Set(timeDrop));
-        ////console.log(unique);
+        
         var selElement=document.getElementById('getTime');
         $("#getTime").empty();
         optionTitle = document.createElement("option");
@@ -301,8 +318,37 @@ function dropTValues(){
 
         }
     }
+    if(subjectChose == "--Subjects--" && filterFlag){
+        if(timeChose == "--Time--" && dayChose.length > 0){
+            console.log("Time Managed.")
+            TimeManage();
+        }
+    } 
 }
+////////Opposite of unique: find duplicates///////
+const findDuplicates = (arr) => {
+    console.log("Finding the duplicates")
+    let sorted_arr = arr.slice().sort(); // You can define the comparing function here. 
+    // JS by default uses a crappy string compare.
+    // (we use slice to clone the array so the
+    // original array won't be modified)
+    let results = [];
+    for (let i = 0; i < sorted_arr.length - 1; i++) {
+      if (sorted_arr[i + 1] == sorted_arr[i]) {
+        results.push(sorted_arr[i]);
+      }
+    }
+    return results;
+  }
+///////////////////////////////
 function dropDValues(){
+    teacherName;
+    teacherName = $("#TeacherSelect")[0].selectedOptions[0].innerText;
+    timeChose;
+    //dayChose = [];
+    totalDays = document.getElementById("checkboxes").querySelectorAll("input")
+    collectDays();
+    timeChose = $("#getTime")[0].selectedOptions[0].innerText;
     //console.log("I am in DropDValues");
     dayDrop = final_teachers[teacherName]["days"];
     ////console.log("DUKBARA:");
@@ -311,11 +357,11 @@ function dropDValues(){
 
     totalDays = document.getElementById("checkboxes").querySelectorAll("input")
     collectDays();
-    //console.log("I am Old:");
+    console.log("I am Old:");
     //console.log(dayChose);
     //console.log("Filter FlaG: ");
     //console.log(filterFlag);
-    if(dayChose.length <= 0){
+    if(dayChose.length <= 0 && timeChose == "--Time--"){
         //console.log("pretty face");
         for(var i=0; i<selElement.length; i++)
         {   
@@ -334,12 +380,15 @@ function dropDValues(){
         ////console.log(dayDrop);
         ////console.log("###########");
     }
+    if(dayChose.length <= 0 && timeChose != "--Time--"){
+        DayManage();
+    }
 }
 function dropSValues(){
     ////console.log("Checking!!!");
     ////console.log($("#getSubject")[0].selectedOptions[0].innerText);
     subjectChose = $("#getSubject")[0].selectedOptions[0].innerText
-    if(subjectChose == "--Subjects--" || null){
+    if(subjectChose == "--Subjects--"){
         ////console.log("SAWEE");
         subjectDrop = $.unique(final_teachers[teacherName]["subs"]);
         const unique = Array.from(new Set(subjectDrop));
@@ -478,6 +527,7 @@ function fillTime(){
 ///////////reset Days///////////
 function resetDays(){
     //console.log("I am in reset mode.");
+    filterFlag = false;
     var selElement= document.getElementById("checkboxes").querySelectorAll("input");
     for(var c=0; c<selElement.length; c++){
         selElement[c].checked = false;
@@ -489,96 +539,81 @@ function resetDays(){
 /////////////////////////
 
 ///////////Confirm Time And Day///////////
+tDMFlag = false;
 function TimeDayManage(){
+    var msgTDM = [];
+    tDMFlag = false;
+    timeDrop2 = [];
+    timeDrop = []; 
     timeChose;
-    dayChose = [];
     timeChose = $("#getTime")[0].selectedOptions[0].innerText;
-    var selElementTime=document.getElementById('getTime');
-    var selElementDay= document.getElementById("checkboxes").querySelectorAll("input");
+    msgTDM.push(timeChose);
     totalDays = document.getElementById("checkboxes").querySelectorAll("input")
     collectDays();
-    if(dayChose.length <= 0){
-        for(var c=0; c<selElement.length; c++){
-            selElement[c].checked = false;
-            selElement[c].disabled = false;
+    msgTDM.push(dayChose);
+    for(var tD=0; tD < dayChose.length; tD++){
+        timeDayLst = final_teachers[teacherName]["days"][dayChose[tD]];
+        console.log("rECHECK:");
+        console.log(timeDayLst);
+        for(var dN=0; dN < timeDayLst.length; dN++){
+            timeDrop.push(timeDayLst[dN]);
         }
-        for(var i=0; i<selElement.length; i++)
-        {   
-            ////console.log("################");
-            ////console.log(selElement[i].value);
-            ////console.log(dayDrop[selElement[i].value]);
-            if(dayDrop[selElement[i].value].length > 0){
-                selElement[i].checked = true;
-            }
-            else{
-                selElement[i].disabled = true;
-            }
-        }
-        ////console.log(dayDrop);
-        ////console.log("###########");
     }
-    if(timeChose == "--Time--" || null){
-        for(var tD=0; tD < Object.values(final_teachers[teacherName]["days"]).length; tD++){
-            ////console.log(tD);
-            timeDayLst = (Object.values(final_teachers[teacherName]["days"])[tD]);
-            for(var dN=0; dN < timeDayLst.length; dN++){
-                timeDrop.push(timeDayLst[dN]);
-            }
-        }
-        const unique = Array.from(new Set(timeDrop));
-        ////console.log(unique);
-        
-        $("#getTime").empty();
-        optionTitle = document.createElement("option");
-        
-        optionTitle.selected = 'true';
-        optionTitle.text='--Time--';
-        selElement.add(optionTitle);
-        for(var i=0; i<unique.length; i++)
-        {
-            optionVal = document.createElement("option");
-            optionVal.value = "ti"+(i+1);
-            optionVal.text=unique[i];
-            selElement.add(optionVal);
-
-        }
+    console.log("#############");
+    console.log(timeDrop);
+    console.log("CheckChekc");
+    console.log(timeChose);
+    valCount = timeDrop.filter(x => x == timeChose).length;
+    console.log("Total Matches");
+    console.log(valCount);
+    if(valCount == dayChose.length){
+            console.log("Bio Yeah");
+    }
+    else{
+        tDMFlag = true;
+        return msgTDM;
     }
 }
 
 var dayMatch = [];
 
 function DayManage(){
+    dayMatch = [];
     timeChose;
-    //dayChose = [];
+    dayChose = [];
     teacherName;
     timeChose = $("#getTime")[0].selectedOptions[0].innerText;
-    var selElementTime=document.getElementById('getTime');
     var selElementDay= document.getElementById("checkboxes").querySelectorAll("input");
-    totalDays = document.getElementById("checkboxes").querySelectorAll("input")
-    collectDays();
+    totalDays = document.getElementById("checkboxes").querySelectorAll("input");
+
+    for(var a=0; a<totalDays.length; a++){
+        dayChose.push(totalDays[a].value);
+    }
     teacherName = $("#TeacherSelect")[0].selectedOptions[0].innerText;
-    ////console.log("Time that is chosen");
-    ////console.log(timeChose);
+    console.log(timeChose);
+    console.log(dayChose);
     if(teacherName != "--Teachers--" && timeChose != "--Time--" ){
         //var dayFlag = true;
         //var timeFlag = true;
-        ////console.log("Start Mismatch Discovery");
+        console.log("Start Mismatch Discovery");
         for(var d=0; d< dayChose.length; d++){
-            ////console.log("Checking Days:");
+            console.log("Checking Days:");
             ////console.log(teacherName);
             ////console.log(dayChose[d]);
             teacherDay = final_teachers[teacherName]["days"][dayChose[d]];
             ////console.log(teacherDay);
             if(teacherDay.includes(timeChose)){
-                ////console.log("Confirmed.");
+                console.log("Confirmed.");
+                console.log(dayChose[d]);
             }
             else{
                 //dayFlag = false;  
-                ////console.log("No.");
+                console.log("No.");
+                console.log(dayChose[d]);
                 dayMatch.push(dayChose[d]);
                 }
         }
-
+        console.log(dayMatch);
         for(var i=0; i<selElementDay.length; i++)
         {   
             ////console.log("################");
@@ -588,67 +623,68 @@ function DayManage(){
                 selElementDay[i].checked = false; 
                 selElementDay[i].disabled = true;
             }
-               
+            else{
+                selElementDay[i].checked = true; 
+                selElementDay[i].disabled = false;
+            }     
         }
         ////console.log("MisMatches: ");
         ////console.log(dayMatch);
     }
     
 }
-
+var timeDrop2 = [];    
+var valCount;
 function TimeManage(){
+    timeDrop2 = [];
+    timeDrop = [];    
+    valCount;
     timeChose;
     //dayChose = [];
     timeChose = $("#getTime")[0].selectedOptions[0].innerText;
-    var selElementTime=document.getElementById('getTime');
-    var selElementDay= document.getElementById("checkboxes").querySelectorAll("input");
     totalDays = document.getElementById("checkboxes").querySelectorAll("input")
     collectDays();
-    if(dayChose.length <= 0){
-        for(var c=0; c<selElement.length; c++){
-            selElement[c].checked = false;
-            selElement[c].disabled = false;
+    teacherName = $("#TeacherSelect")[0].selectedOptions[0].innerText;
+    console.log(filterFlag);
+    console.log("Bob the king");
+    console.log(dayChose);
+    for(var tD=0; tD < dayChose.length; tD++){
+        //console.log(tD);
+        timeDayLst = final_teachers[teacherName]["days"][dayChose[tD]];
+        console.log("Time day list:");
+        console.log(timeDayLst);
+        for(var dN=0; dN < timeDayLst.length; dN++){
+            timeDrop.push(timeDayLst[dN]);
         }
-        for(var i=0; i<selElement.length; i++)
-        {   
-            ////console.log("################");
-            ////console.log(selElement[i].value);
-            ////console.log(dayDrop[selElement[i].value]);
-            if(dayDrop[selElement[i].value].length > 0){
-                selElement[i].checked = true;
-            }
-            else{
-                selElement[i].disabled = true;
-            }
-        }
-        ////console.log(dayDrop);
-        ////console.log("###########");
     }
-    if(timeChose == "--Time--" || null){
-        for(var tD=0; tD < Object.values(final_teachers[teacherName]["days"]).length; tD++){
-            ////console.log(tD);
-            timeDayLst = (Object.values(final_teachers[teacherName]["days"])[tD]);
-            for(var dN=0; dN < timeDayLst.length; dN++){
-                timeDrop.push(timeDayLst[dN]);
-            }
+    console.log("#############");
+    console.log(timeDrop);
+    console.log("Rechecking");
+    for(var r=0; r<timeDrop.length; r++){
+        valCount = timeDrop.filter(x => x == timeDrop[r]).length;
+        console.log("Total Matches");
+        console.log(valCount);
+        if(valCount == dayChose.length){
+            console.log("Yeah Boi");
+            timeDrop2.push(timeDrop[r]);
         }
-        const unique = Array.from(new Set(timeDrop));
-        ////console.log(unique);
-        
-        $("#getTime").empty();
-        optionTitle = document.createElement("option");
-        
-        optionTitle.selected = 'true';
-        optionTitle.text='--Time--';
-        selElement.add(optionTitle);
-        for(var i=0; i<unique.length; i++)
-        {
-            optionVal = document.createElement("option");
-            optionVal.value = "ti"+(i+1);
-            optionVal.text=unique[i];
-            selElement.add(optionVal);
+    }
+    console.log("Refined");
+    console.log(timeDrop2);
+    const unique = Array.from(new Set(timeDrop2));
 
-        }
+    var selElement=document.getElementById('getTime');
+    $("#getTime").empty();
+    optionTitle = document.createElement("option");
+    optionTitle.selected = 'true';
+    optionTitle.text='--Time--';
+    selElement.add(optionTitle);
+    for(var i=0; i<unique.length; i++)
+    {
+        optionVal = document.createElement("option");
+        optionVal.value = "ti"+(i+1);
+        optionVal.text=unique[i];
+        selElement.add(optionVal);
     }
 }
 
@@ -681,8 +717,11 @@ var choicesToFilter = [];
 var choicesStringValues = [];
 
 var passList;
-
+var noResult = false;
 var filterFlag = false; 
+var dayFlag = false;
+var timeFlag = false;
+var tCount = 0;
 
 function filterWValues(){
     subjectChose;
@@ -694,15 +733,18 @@ function filterWValues(){
     collectDays();
     ////console.log(final_teachers);
     ////console.log(subjectChose);
-    ////console.log(dayChose);
+    console.log("DayChooooooose: ");
+    //console.log(dayChose);
     ////console.log(timeChose);
     subjectsTeach = [];
     daysTeach = [];
     timesTeach = [];
     filterFlag = true;
+    noResult = false;
+
     for(var f=0; f<tchNameLst.length; f++){
         ////console.log(tchNameLst[f]);
-        if(subjectChose != "--Subjects--" || null){
+        if(subjectChose != "--Subjects--"){
             chkTeachSubs = final_teachers[tchNameLst[f]]["subs"]
             if(chkTeachSubs.includes(subjectChose)){
                 ////console.log(chkTeachSubs);
@@ -715,46 +757,76 @@ function filterWValues(){
             }
         }
         if(dayChose.length > 0){
-            var dayFlag = true;
-            var timeFlag = true;
+            console.log(dayChose);
+            dayFlag = true;
+            timeFlag = true;
+            tCount = 0;
             for(var d=0; d< dayChose.length; d++){
                 ////console.log("Checking Days:");
                 teacherDay = final_teachers[tchNameLst[f]]["days"][dayChose[d]];
-                if(teacherDay.length > 0)
-                    console.log("Yes. "+dayChose[d]);
+                if(teacherDay.length > 0){
+                    console.log("Yes. "+tchNameLst[f]+" :"+dayChose[d]);
+                    dayFlag = true;
+                }
                 else{
                     dayFlag = false;  
-                    //console.log("No.");
+                    console.log("No.");
                 }
                 ////console.log("Checking Time for Those Days");
                 dayIncluded = final_teachers[tchNameLst[f]]["days"][dayChose[d]];
+                console.log("Day Included");
+                console.log(dayIncluded);
                 if(timeChose != "--Time--"){
-                    ////console.log("Speed Up");
                     if(dayIncluded.includes(timeChose)){
-                        //console.log("Yup Time is there");
+                        console.log("Yup Time is there");
+                        tCount = tCount+1;
+                        timeFlag = true;
                     }
                     else{
-                        //console.log("No time at all");
+                        console.log("No time at all");
+                        tCount = tCount-1;
                         timeFlag = false;
                     }
+                    /*while(timeFlag){
+                        console.log("In while loop")
+                        if(dayIncluded.includes(timeChose)){
+                            console.log("Yeeeee");
+                            timeFlag = true;
+                        }
+                        else{
+                            console.log("Nuh uh");
+                            timeFlag = false;
+                        }    
+                    }*/
+                    /*if(dayIncluded.includes(timeChose)){
+                        console.log("Yup Time is there");
+                        timeFlag = true;
+                    }
+                    else{
+                        console.log("No time at all");
+                        timeFlag = false;
+                    }*/
                 }
                 else{
-                    ////console.log("Not there");
-                    timeFlag = false;
+                    console.log("Not there");
                 }
             }
             if(dayFlag){
                 daysTeach.push(tchNameLst[f]);
             }
-            if(timeFlag){
+            if(tCount == dayChose.length){
                 timesTeach.push(tchNameLst[f]);
             }
+            console.log("Time Flag: "+timeFlag);
+            console.log("TCount: "+tCount);
         }
+
         else{
             dayIncluded = Object.keys(final_teachers[tchNameLst[f]]["days"]);
+            console.log("The other of the other");
             var timeIncluded = [];
-            if(timeChose != "--Time--" || null){
-                ////console.log("Kuddooies");
+            if(timeChose != "--Time--"){
+                console.log("Kuddooies");
                 ////console.log(dayIncluded);
                 for(var k=0; k < dayIncluded.length; k++){
                     timeIncluded = final_teachers[tchNameLst[f]]["days"][dayIncluded[k]];
@@ -764,7 +836,7 @@ function filterWValues(){
                         timesTeach.push(tchNameLst[f]);
                     }
                     else{
-                        ////console.log("Time Flies Away");
+                        console.log("Time Flies Away");
                     }
                 }
             }
@@ -783,53 +855,81 @@ function filterWValues(){
 
     choicesToFilter = [];
     choicesStringValues = [];
+    console.log("Tis your chance!");
+    console.log(dayChose.length);
+    console.log(tCount);
 
     if(subjectsTeach.length > 0){
-        //console.log("I got the subjects");
+        console.log("I got the subjects");
         choicesToFilter.push(subjectsTeach);
         choicesStringValues.push("#getSubject");
     }
     if(daysTeach.length > 0){
-        //console.log("I got the days");
+        console.log("I got the days");
         choicesToFilter.push(daysTeach);
         choicesStringValues.push("#checkboxes");
     }
     if(uniqueTime.length > 0){
-        //console.log("I got the time");
+        console.log("I got the time");
         choicesToFilter.push(uniqueTime);
         choicesStringValues.push("#getTime");
     }
+    //if(timeChose != "--Time--" && dayChose.length > 0 && subjectChose != "--Subjects--"){
+        console.log("SubjectTeach: "+subjectsTeach);
+        console.log("DayTeach: "+daysTeach);
+        console.log("TimeTeach: "+timesTeach);
+        console.log("Impossible: "+dayFlag);
+        console.log("Impossible2: "+tCount);
+        console.log("Ipossible3: "+timeFlag);
+        if((subjectsTeach.length <= 0 && daysTeach.length <= 0 && uniqueTime.length <= 0) || (daysTeach.length > 0 && timeChose != "--Time--" && uniqueTime.length <= 0)){
+            console.log("NonE FoUnD");
+            var selElement=document.getElementById('TeacherSelect');
+            $("#TeacherSelect").empty();
+            optionTitle = document.createElement("option");
+            optionTitle.selected = 'true';
+            optionTitle.text='--Teachers--';
+            selElement.add(optionTitle);
+            optionVal = document.createElement("option");
+            optionVal.value = "t"+(1);
+            optionVal.text="No Result";
+            selElement.add(optionVal);
+            noResult = true;
+        }
+    //}
     myFilter();
 }
 function myFilter(){
     passList = [];
     ////console.log(choicesToFilter);
-    if(choicesToFilter.length > 0 && choicesToFilter.length < 2){
-        ////console.log("No.1");
-        let teachersFilter = choicesToFilter[0]; 
-        passList = teachersFilter;
-        addSpecificTeachers(passList);   
+    if(!noResult){
+        if(choicesToFilter.length > 0 && choicesToFilter.length < 2){
+            ////console.log("No.1");
+            let teachersFilter = choicesToFilter[0]; 
+            passList = teachersFilter;
+            addSpecificTeachers(passList);   
+        }
+        if(choicesToFilter.length > 1 && choicesToFilter.length < 3){
+            ////console.log("No.2");
+            let teachersFilter = choicesToFilter[0].filter(x => choicesToFilter[1].includes(x));
+            ////console.log("Combined Combiner Combination: ");
+            ////console.log(teachersFilter);
+            passList = teachersFilter;
+            addSpecificTeachers(passList);
+        }
+        if(choicesToFilter.length > 2 && choicesToFilter.length < 4){
+            ////console.log("No.3");
+            let teachersFilter = choicesToFilter[0].filter(x => choicesToFilter[1].includes(x) && choicesToFilter[2].includes(x));
+            ////console.log("Combined Combiner Combination: ");
+            ////console.log(teachersFilter);
+            passList = teachersFilter;
+            addSpecificTeachers(passList);
+        }  
     }
-    if(choicesToFilter.length > 1 && choicesToFilter.length < 3){
-        ////console.log("No.2");
-        let teachersFilter = choicesToFilter[0].filter(x => choicesToFilter[1].includes(x));
-        ////console.log("Combined Combiner Combination: ");
-        ////console.log(teachersFilter);
-        passList = teachersFilter;
-        addSpecificTeachers(passList);
-    }
-    if(choicesToFilter.length > 2 && choicesToFilter.length < 4){
-        ////console.log("No.3");
-        let teachersFilter = choicesToFilter[0].filter(x => choicesToFilter[1].includes(x) && choicesToFilter[2].includes(x));
-        ////console.log("Combined Combiner Combination: ");
-        ////console.log(teachersFilter);
-        passList = teachersFilter;
-        addSpecificTeachers(passList);
-    }  
 }
 
 //////////TeacherAdd Based On Parameter//////
 function addSpecificTeachers(passList){
+    console.log("Changing it up");
     var selElement=document.getElementById('TeacherSelect');
     $("#TeacherSelect").empty();
     optionTitle = document.createElement("option");
@@ -852,21 +952,34 @@ var dayChkd = "";
 var counter = 1; 
 
 function myAdd() {
+    teacherName = $("#TeacherSelect")[0].selectedOptions[0].innerText;
+    var msgTDM = TimeDayManage(); 
     findDays();
     var table = $("#resTable");
-    table.append("<tr id=dataRow"+counter+" >"+
-    "<td>"+$("#getSeason")[0].selectedOptions[0].innerText+
-    "</td><td>"+$("#getSubject")[0].selectedOptions[0].innerText+
-    "</td><td>"+$("#startDate").val()+
-    "</td><td>"+$("#endDate").val()+
-    "</td><td>"+$("#noDateTxt").val()+
-    "</td><td>"+$("#getClassNum")[0].selectedOptions[0].innerText+
-    "</td><td>"+$("#TeacherSelect")[0].selectedOptions[0].innerText+ 
-    "</td><td>"+dayChkd+
-    "</td><td>"+$("#getTime")[0].selectedOptions[0].innerText+
-    "</td><td>"+$("#getGrade")[0].selectedOptions[0].innerText+
-    "</td> <td id=deleter> <input type=button value=X onclick=deleteRow(this)> </td> </tr>");
-
+    var dblChkInfo = chkTeacherTwice();
+    if(dblChkInfo[3] || tDMFlag){
+        if(dblChkInfo[3]){
+            console.log("Repeating, cannot append to table!!!");
+            alert("Cannot add - the teacher is already assigned, check for column with: "+ dblChkInfo[0]+" | "+ dblChkInfo[1]+" | "+ dblChkInfo[2]);
+        }
+        else{
+            alert("This is not a valid combination: "+ teacherName+" is not availble from "+ msgTDM[0]+" on "+msgTDM[1]+". Try another combination.");
+        }
+    }
+    else{
+        table.append("<tr id=dataRow"+counter+" >"+
+        "<td>"+$("#getSeason")[0].selectedOptions[0].innerText+
+        "</td><td>"+$("#getSubject")[0].selectedOptions[0].innerText+
+        "</td><td>"+$("#startDate").val()+
+        "</td><td>"+$("#endDate").val()+
+        "</td><td>"+$("#noDateTxt").val()+
+        "</td><td>"+$("#getClassNum")[0].selectedOptions[0].innerText+
+        "</td><td>"+$("#TeacherSelect")[0].selectedOptions[0].innerText+ 
+        "</td><td>"+dayChkd+
+        "</td><td>"+$("#getTime")[0].selectedOptions[0].innerText+
+        "</td><td>"+$("#getGrade")[0].selectedOptions[0].innerText+
+        "</td> <td id=deleter> <input type=button value=X onclick=deleteRow(this)> </td> </tr>");
+    }
     ////console.log("HAKUNA MATATA: ");
     ////console.log($("#resTable"));
     ////console.log("HULULULU");
@@ -899,7 +1012,46 @@ function deleteRow(r) {
     document.getElementById("resTable").deleteRow(i);
     sendButtonCondition();
 }
-////////////////////
+
+//////////Real Chk///////////////////
+var redundantFlag = false;
+function chkTeacherTwice(){
+    redundantFlag = false;
+    var teacherNow = $("#TeacherSelect")[0].selectedOptions[0].innerText;
+    var timeNow = $("#getTime")[0].selectedOptions[0].innerText;
+    var dayNow = dayChkd;
+    teacherNow = teacherNow.trim();
+    dayNow = dayNow.trim();
+    timeNow = timeNow.trim();
+    console.log(teacherNow);
+    console.log(dayNow);
+    console.log(timeNow);
+
+    var retTableList = getTableData();
+    var teacherAppened = retTableList[6];
+    var dayAppended = retTableList[7];
+    var timeAppended = retTableList[8];
+    console.log(teacherAppened);
+    console.log(dayAppended);
+    console.log(timeAppended);
+
+    for(var i=0; i<teacherAppened.length; i++){
+        console.log(teacherAppened[i]);
+        console.log(dayAppended[i]);
+        console.log(timeAppended[i]);
+        if(teacherAppened[i]==teacherNow && dayAppended[i]==dayNow && timeAppended[i]==timeNow){
+            console.log("All Three In Account");
+            redundantFlag = true;
+        }
+    }
+    var dblChkInfo = [];
+    dblChkInfo.push(teacherNow);
+    dblChkInfo.push(dayNow);
+    dblChkInfo.push(timeNow);
+    dblChkInfo.push(redundantFlag);    
+    return dblChkInfo;
+}
+////////////////////////////
 
 ////////Disable the send button////////////
 function sendButtonCondition(){
@@ -918,6 +1070,7 @@ function sendButtonCondition(){
     }
 }
 //////////////////////////
+
 ///////////////Pick Multiple Dates/////////
 var noDateVal = document.getElementById("noDate");
 var dateNoClass;
@@ -987,12 +1140,7 @@ function dateAdd(){
 }
 
 ////////////////////////
-///////NoDate Popup////////
 
-
-
-
-////////////////////////////
 //////////Total Classes Calculation//////////////
 function getSatSunCount(startDate, endDate){
    var totalSatSun = 0;
@@ -1094,9 +1242,9 @@ function totalClasses(){
     }
 }
 /////////////////////////////
-/////////submit the table///////////
 
-function submitTable(){
+/////////get table data///////////
+function getTableData(){
     var i=0;
     var tableDict = {};
     var courseList = [];
@@ -1112,6 +1260,7 @@ function submitTable(){
     var exampleDict = {};
     var changeSheetName = $("#SeasonTitle")[0].selectedOptions[0].innerText;
     var seasonSubList = [];
+    var retTableList = [];
     $("#resTable").find("tr").each(function(){
         if(i>=1){
             seasonSubList.push(($(this)[0].children[0].innerText));
@@ -1122,38 +1271,46 @@ function submitTable(){
             classNumList.push(($(this)[0].children[5].innerText));
             teachersList.push(($(this)[0].children[6].innerText));
             dayList.push(($(this)[0].children[7].innerText));
-            timeList.push(($(this)[0].children[8].innerText));
-        ////console.log(i);
+            timeList.push(($(this)[0].children[8].innerText));     
         }
     i= i+1;
     });
-    ////console.log("SeasonList: "+seasonSubList);
-    ////console.log("sdList: "+sdList);
-    ////console.log("edList: "+edList);
-    ////console.log("ndList: "+ndList);
-    ////console.log("classNumList: "+classNumList);
-    ////console.log("teachersList: "+teachersList);
-    ////console.log("dayList: "+dayList);
-    ////console.log("timeList: "+timeList); 
-    //////////////Save and Download///////////////////
-    tableDict["Sheet Name"] = changeSheetName;
-    tableDict["Season"] = seasonSubList;   
-    tableDict["Course"] = courseList;
-    tableDict["Start Date"] = sdList;
-    tableDict["End Date"] = edList;
-    tableDict["No Date"] = ndList;
-    tableDict["# of Classes"] = classNumList;
-    tableDict["Teacher"] = teachersList;
-    tableDict["Day"] = dayList;
-    tableDict["Time"] = timeList;
+    retTableList.push(changeSheetName);
+    retTableList.push(seasonSubList);
+    retTableList.push(courseList);
+    retTableList.push(sdList);
+    retTableList.push(edList);
+    retTableList.push(classNumList);
+    retTableList.push(teachersList);
+    retTableList.push(dayList);
+    retTableList.push(timeList);
+
+    return retTableList;
+}
+
+/////////submit the table///////////
+
+function submitTable(){
+
+    var retTableList = getTableData();
+    tableDict["Sheet Name"] = retTableList[0];
+    tableDict["Season"] = retTableList[1];   
+    tableDict["Course"] = retTableList[2];
+    tableDict["Start Date"] = retTableList[3];
+    tableDict["End Date"] = retTableList[4];
+    tableDict["No Date"] = retTableList[5];
+    tableDict["# of Classes"] = retTableList[6];
+    tableDict["Teacher"] = retTableList[7];
+    tableDict["Day"] = retTableList[8];
+    tableDict["Time"] = retTableList[9];
     
     //console.log(tableDict);
 
     createXLSLFormatObj = tableDict;
-    }
-
-    ///////////////////
-    ////Reading from Spreadsheet////
+    
+}
+///////////////////
+////Reading from Spreadsheet////
 
 function readspreadsheet(){
     request = $.ajax({
@@ -1209,10 +1366,7 @@ function readspreadsheet(){
 
     // Prevent default posting of form
     event.preventDefault();
-    
-
-    }
-    
+}
 
 function sheetToTable(){
     var tableCont = $('#resTable');
@@ -1371,3 +1525,14 @@ function sheetToTable(){
     sendButtonCondition();
 }
 //////////////////////////
+/////////Salesforce/////////////
+/*function jsonExtract(){;
+    var Course = '{ "Attribute": [' + '"hed__End_Date__c": [],' + 
+    '"k12kit__Grade_Level__c": [],' + 
+    '"LastModifiedById": [],' +
+    '"hed__Start_Date__c": [],' + 
+    '"hed__Subject_Area__c" : [] ] }';
+    var CourseText = JSON.parse(Course);
+    console.log(CourseText.Attribute.hed__Subject_Area__c);
+    document.getElementById("responseJson").innerHTML = "New text!";
+ }*/
