@@ -32,7 +32,7 @@
                     <a href="https://docs.google.com/spreadsheets/d/1PkuL_qGRI7uxCQ48pZFw2FAgILq4e2hO0BpR2IIF5GU/edit?usp=sharing" target="_blank">Output Spreadsheet</a>
                 </div>
             </div>
-            <select id="SeasonTitle" name='seasondrop' onchange="fillSeason()" onclick="jsonExtract()">
+            <select id="SeasonTitle" name='seasondrop' onchange="fillSeason()">
                 <option disabled selected value = "">--Season--</option>
                 <option value = "ssp" >Spring</option>
                 <option value = "ssu">Summer</option>
@@ -182,8 +182,8 @@
         var databuf=JSON.stringify(createXLSLFormatObj);
         console.log("I m going to try"+databuf);
         request = $.ajax({
-            url: "C:\\Users\\jayru\\PythonProject\\scheduler-master\\scheduler-master\\OutputSpreadsheet.xlsx",
-            //url: "https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbzwo8xoGY2TYAc8fShl5ZskV9XgtSGivMyVDG71xyuhb917H-xz/exec",
+            //url: "C:\\Users\\jayru\\PythonProject\\scheduler-master\\scheduler-master\\OutputSpreadsheet.xlsx",
+            url: "https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbzwo8xoGY2TYAc8fShl5ZskV9XgtSGivMyVDG71xyuhb917H-xz/exec",
             type: "post",
             data: {data:databuf}      
         });
