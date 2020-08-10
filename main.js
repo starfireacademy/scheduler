@@ -1245,8 +1245,8 @@ function totalClasses(){
 
 /////////get table data///////////
 function getTableData(){
+    tableDict = {};
     var i=0;
-    var tableDict = {};
     var courseList = [];
     var sdList = [];
     var edList = [];
@@ -1289,9 +1289,8 @@ function getTableData(){
 }
 
 /////////submit the table///////////
-
+var tableDict = {};
 function submitTable(){
-
     var retTableList = getTableData();
     tableDict["Sheet Name"] = retTableList[0];
     tableDict["Season"] = retTableList[1];   
@@ -1304,7 +1303,7 @@ function submitTable(){
     tableDict["Day"] = retTableList[8];
     tableDict["Time"] = retTableList[9];
     
-    //console.log(tableDict);
+    console.log(tableDict);
 
     createXLSLFormatObj = tableDict;
     
