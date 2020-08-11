@@ -177,12 +177,9 @@
     {
     //converttable($("#resTable")[0]);
     submitTable();
-    //{"Course":["Private Tutoring","Private Tutoring"],"Start Date":["2020-06-29","2020-06-29"]}
-        //var databuf=JSON.stringify({"Course":["Private Tutoring","Private Tutoring"],"Start Date":["2020-06-29","2020-06-29"]});
         var databuf=JSON.stringify(createXLSLFormatObj);
         console.log("I m going to try"+databuf);
         request = $.ajax({
-            //url: "C:\\Users\\jayru\\PythonProject\\scheduler-master\\scheduler-master\\OutputSpreadsheet.xlsx",
             url: "https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbzwo8xoGY2TYAc8fShl5ZskV9XgtSGivMyVDG71xyuhb917H-xz/exec",
             type: "post",
             data: {data:databuf}      
@@ -217,56 +214,7 @@
         // Prevent default posting of form
         event.preventDefault();
         
-        /*SALES FORCE STUFF: 
-        var clientId = "3MVG9FxR3Tq3eZN.3Ykts1kDoDjY1wvtCiZG5UQdVBo_RKVsbbe_DCD7lQ__70KsM0qdjCRKImG5UyETMN5DR";
-        var consumerSecret = "68219D3DD3EC9FE338883888421D5D2B1214D6EAEDA21C20ECFAA96617BA8777";
-        //Authorization endpoint
-        var authEndPoint = "https://test.salesforce.com/services/oauth2/authorize";
-        //response_type must be set to token
-        var responseType = "token";
-        //This is the callback URL from the connected app
-        var redirectURI = "https://shwetaruparel.github.io/testRWD/";
-        //Construct the URL with the required parameters
-        var requestURL = authEndPoint+'?client_id='+clientId+'&response_type='+responseType+'&redirect_uri='+redirectURI;
-        //redirect the user to the endpoint
-        window.location = requestURL;
-        var requestUrl = 'https://cors-anywhere.herokuapp.com/https://starfireed--dev.lightning.force.com/lightning/r/hed__Course_Offering__c/a0B2D0000021RyRUAU';
-        //create a javascript object with the account field values
-        var accountInfo = {
-            "hed__Start_Date__c" : createXLSLFormatObj["Start Date"],
-            "hed__End_Date__c" : createXLSLFormatObj["End Date"],
-            "No_Class_Dates__c" : createXLSLFormatObj["No Date"],
-            "Grade__c" : "6-7",
-            "hed__Term__c": createXLSLFormatObj["Season"]
-        }
-        var Course = {"Attribute": [ 
-            {"hed__End_Date__c": []},
-            {"k12kit__Grade_Level__c": []}, 
-            {"LastModifiedById": []},
-            {"hed__Start_Date__c": []}, 
-            {"hed__Subject_Area__c" : []} 
-        ]}
-        //convert the object to a JSON string
-        var accountInfoJson = JSON.stringify(accountInfo);
-        //send POST with ajax
-        $.ajax({
-        type: 'PATCH',
-        url : requestUrl,
-        //add the authorization header including the access_token
-        crossDomain: true,
-        instance_url: 'https://starfireed--dev.lightning.force.com/',
-        headers : {
-        'Authorization' : 'Bearer '+accessToken,
-        'Content-Type' : 'application/json'
-        },
-        data : accountInfoJson,
-        success : function(response){
-        displayAccountInfo(response);
-        },
-        error: function(response){
-        displayError(response);
-        }
-        });*/
+        
         }
         </script>
         </div>
