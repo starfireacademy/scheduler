@@ -1280,6 +1280,7 @@ function getTableData(){
     retTableList.push(courseList);
     retTableList.push(sdList);
     retTableList.push(edList);
+    retTableList.push(ndList)
     retTableList.push(classNumList);
     retTableList.push(teachersList);
     retTableList.push(dayList);
