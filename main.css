@@ -21,13 +21,13 @@ body {
   padding-left: 400px;
 }
 /* unvisited link */
-a:link {
+a{
   font-size: 20px;
-  color: red;
+  color: darkred;
   text-decoration: none;
 }
 
-/* visited link */
+/* visited link*/
 a:visited {
   color: Blue;
 }
@@ -40,7 +40,7 @@ a:hover {
 
 /* selected link */
 a:active {
-  color: red;
+  color: darkred;
 }
 .container {
   display: grid;
@@ -291,46 +291,3 @@ tr:hover #deleter{
 #deleter:hover{
   background-color: red;
 }
-
-/*tooltip popup
-.tooltip {
-  position: relative;
-  display: inline-block;
-  border-bottom: 1px dotted black;
-}
-
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 120px;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 0;
-  opacity: 0;
-  transition: opacity 0.3s;
-  
-  // Position the tooltip 
-  position: absolute;
-  z-index: 1;
-  top: 100%;
-  left: 50%;
-  margin-left: -60px;
-}
-.tooltip .tooltiptext::after {
-	margin-top: 0px;
-  	content: "";
-  	position: absolute;
-  	bottom: 100%;
-  	left: 50%;
-  	transform: scaleY(-1);
-  	margin-left: -5px;
-  	border-width: 5px;
- 	border-style: solid;
-  	border-color: #555 transparent transparent transparent;
-}
-
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-  opacity: 1;
-}*/
