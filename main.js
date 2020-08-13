@@ -1028,9 +1028,9 @@ function chkTeacherTwice(){
     console.log(timeNow);
 
     var retTableList = getTableData();
-    var teacherAppened = retTableList[6];
-    var dayAppended = retTableList[7];
-    var timeAppended = retTableList[8];
+    var teacherAppened = retTableList[7];
+    var dayAppended = retTableList[8];
+    var timeAppended = retTableList[9];
     console.log(teacherAppened);
     console.log(dayAppended);
     console.log(timeAppended);
