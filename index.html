@@ -11,6 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="./main.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <!-- Custom Theme JavaScript -->
   <script src='google-sheet.js'></script>
 </head>
@@ -171,7 +172,7 @@
                 </tr>
             </table>          
         <div id='success'></div>
-        <button id="sendButton" onclick="submitNow()">Send</button>
+        <button id="sendButton" onclick="submitNow()" link="salesforce.html">Send</button>
     <script>
     function submitNow()
     {
@@ -213,11 +214,34 @@
 
         // Prevent default posting of form
         event.preventDefault();
-        
-        
+
         }
         </script>
         </div>
+        <div id="confirm">
+            <div class="message"></div>
+            <button class="dSet">Set Days</button>
+            <button class="tSet">Set Times</button>
+            <button class="cancel">Cancel</button>
+         </div>
+         <script>
+            function functionConfirm(msg, myDSet, myTSet, cancel) {
+                console.log("Here I go!");
+               var confirmBox = $("#confirm");
+               confirmBox.find(".message").text(msg);
+               confirmBox.find(".dSet,.tSet,.cancel").unbind().click(function() {
+                  console.log("Time to hide");
+                  confirmBox.animate({"height": -230},600);
+                  confirmBox.hide();
+               });
+               confirmBox.find(".dSet").click(myDSet);
+               confirmBox.find(".tSet").click(myTSet);
+               confirmBox.find(".no").click(cancel);
+               confirmBox.show();
+               console.log("Show Please");
+               confirmBox.animate({"height": 180},600);
+            }
+         </script>
     </div>
 </body>
 </html>
