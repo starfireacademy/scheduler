@@ -222,7 +222,7 @@ function chkFilterClick(){
     tchNameLst = [];
     teacherNum;
     subjectChose = $("#getSubject")[0].selectedOptions[0].innerText
-    totalDays = document.getElementById("checkboxes").querySelectorAll("input")
+    totalDays = document.getElementById("checkboxes").querySelectorAll("input");
     collectDays();
     timeChose = $("#getTime")[0].selectedOptions[0].innerText;
     teacherName = $("#TeacherSelect")[0].selectedOptions[0].innerText;
@@ -280,7 +280,7 @@ function fillOtherDrpdn(){
 function dropTValues(){
     console.log("I am In DropTValues");
     timeChose;
-    totalDays = document.getElementById("checkboxes").querySelectorAll("input")
+    totalDays = document.getElementById("checkboxes").querySelectorAll("input");
     collectDays();
     timeChose = $("#getTime")[0].selectedOptions[0].innerText;
     timeDayLst = [];
@@ -346,7 +346,7 @@ function dropDValues(){
     teacherName = $("#TeacherSelect")[0].selectedOptions[0].innerText;
     timeChose;
     //dayChose = [];
-    totalDays = document.getElementById("checkboxes").querySelectorAll("input")
+    totalDays = document.getElementById("checkboxes").querySelectorAll("input");
     collectDays();
     timeChose = $("#getTime")[0].selectedOptions[0].innerText;
     //console.log("I am in DropDValues");
@@ -355,7 +355,7 @@ function dropDValues(){
     ////console.log(teacherName);
     var selElement= document.getElementById("checkboxes").querySelectorAll("input");    
 
-    totalDays = document.getElementById("checkboxes").querySelectorAll("input")
+    totalDays = document.getElementById("checkboxes").querySelectorAll("input");
     collectDays();
     console.log("I am Old:");
     //console.log(dayChose);
@@ -452,7 +452,7 @@ function fillTeacherSubjects(){
     subjectChose = $("#getSubject")[0].selectedOptions[0].innerText;
     //TeacherChose = $("#TeacherSelect")[0].selectedOptions[0].innerText;
     timeChose = $("#getTime")[0].selectedOptions[0].innerText;
-    totalDays = document.getElementById("checkboxes").querySelectorAll("input")
+    totalDays = document.getElementById("checkboxes").querySelectorAll("input");
     collectDays();
     ////console.log("Chosen Subject:");
     ////console.log(subjectChose); 
@@ -548,7 +548,7 @@ function TimeDayManage(){
     timeChose;
     timeChose = $("#getTime")[0].selectedOptions[0].innerText;
     msgTDM.push(timeChose);
-    totalDays = document.getElementById("checkboxes").querySelectorAll("input")
+    totalDays = document.getElementById("checkboxes").querySelectorAll("input");
     collectDays();
     msgTDM.push(dayChose);
     for(var tD=0; tD < dayChose.length; tD++){
@@ -642,7 +642,7 @@ function TimeManage(){
     timeChose;
     //dayChose = [];
     timeChose = $("#getTime")[0].selectedOptions[0].innerText;
-    totalDays = document.getElementById("checkboxes").querySelectorAll("input")
+    totalDays = document.getElementById("checkboxes").querySelectorAll("input");
     collectDays();
     teacherName = $("#TeacherSelect")[0].selectedOptions[0].innerText;
     console.log(filterFlag);
@@ -729,7 +729,7 @@ function filterWValues(){
     //dayChose = [];
     subjectChose = $("#getSubject")[0].selectedOptions[0].innerText;
     timeChose = $("#getTime")[0].selectedOptions[0].innerText;
-    totalDays = document.getElementById("checkboxes").querySelectorAll("input")
+    totalDays = document.getElementById("checkboxes").querySelectorAll("input");
     collectDays();
     ////console.log(final_teachers);
     ////console.log(subjectChose);
@@ -957,13 +957,16 @@ function myAdd() {
     findDays();
     var table = $("#resTable");
     var dblChkInfo = chkTeacherTwice();
+    var newLine = "\n";
+    console.log(tDMFlag);
     if(dblChkInfo[3] || tDMFlag){
         if(dblChkInfo[3]){
             console.log("Repeating, cannot append to table!!!");
             alert("Cannot add - the teacher is already assigned, check for column with: "+ dblChkInfo[0]+" | "+ dblChkInfo[1]+" | "+ dblChkInfo[2]);
         }
         else{
-            alert("This is not a valid combination: "+ teacherName+" is not availble from "+ msgTDM[0]+" on "+msgTDM[1]+". Try another combination.");
+            //alert("This is not a valid combination: "+ teacherName+" is not availble from "+ msgTDM[0]+" on "+msgTDM[1]+". Try another combination.");
+            functionConfirm("This is not a valid combination: "+teacherName+" is not availble from "+ msgTDM[0]+" on "+msgTDM[1]+". "+newLine+ "Try another combination (by clicking cancel), Or, select 'Set Days'(to change days based on time selected), or select 'Set Times'(to change timings based on day(s) selected)" , function dSet() {alert("Change Days"); DayManage();}, function tSet() {alert("Change Time"); TimeManage();});
         }
     }
     else{
@@ -1143,17 +1146,51 @@ function dateAdd(){
 
 //////////Total Classes Calculation//////////////
 function getSatSunCount(startDate, endDate){
-   var totalSatSun = 0;
-   for (var i = startDate; i <= endDate; i.setDate(i.getDate()+1)){
-       if (i.getDay() == 0) totalSatSun++;
-       if (i.getDay() == 6) totalSatSun++;
-   }
-   return totalSatSun;
+    var DaysToChk = [];
+    var aWeek = [];
+    totalDays = document.getElementById("checkboxes").querySelectorAll("input");
+    collectDays();
+    for(var t=0; t < totalDays.length; t++){
+        aWeek.push(totalDays[t].value);
+    }
+    console.log("Look at this boi: ");
+    console.log(aWeek);
+    console.log(dayChose);
+    for(var c=0; c < dayChose.length; c++){
+        if(aWeek.includes(dayChose[c])){
+            var cnt = aWeek.indexOf(dayChose[c]);
+            console.log("Cnt");
+            console.log(cnt)
+            DaysToChk.push(cnt+1);
+        }
+    }
+    console.log("The List:");
+    console.log(DaysToChk);
+    var totalAmtD = 0;
+    for (var i = startDate; i <= endDate; i.setDate(i.getDate()+1)){
+        if(DaysToChk.includes(i.getDay()+1)){
+            console.log("Yippeeeee!");
+            totalAmtD = totalAmtD+1;
+            console.log("Date: ");
+            console.log(i.getDate()+1);
+            console.log("Day/Num: ");
+            console.log(i.getDay()+1);
+
+        }
+        else{
+            console.log("Date: ");
+            console.log(i.getDate()+1);
+            console.log("Day/Num: ");
+            console.log(i.getDay()+1);
+        }
+    }
+    return totalAmtD;
 }
 function totalClasses(){
     var date1 = $("#startDate").val();
     var date2 = $("#endDate").val();
     var date3 = $("#noDateTxt").val();
+    ///Math/////
     if((date1 != "" || null) && (date2!=""||null)){
         var nDSplit;
         var startDate = new Date(date1);
@@ -1172,12 +1209,12 @@ function totalClasses(){
             nDSplit2 = [];
         }
         var noClassDate = nDSplit2.length 
-        var weekendsCount = getSatSunCount(startDate, endDate);
+        var daysCount = getSatSunCount(startDate, endDate);
         var selElementCount=$("#getClassNum option");
         var numClassCount = [];
         var sumNumClass = [];
-        /////Math/////
-        ddRes = diffD1D2 - (weekendsCount+noClassDate);
+        /////Checking and Adding Dates/////
+        ddRes = diffD1D2 - ((diffD1D2-daysCount)+noClassDate);
         for(var s=1; s<selElementCount.length; s++){
             if(selElementCount[s].innerText == ddRes){
                 numClassCount.push("=");
@@ -1275,6 +1312,7 @@ function getTableData(){
         }
     i= i+1;
     });
+    console.log("Sheet New Name: "+ changeSheetName);
     retTableList.push(changeSheetName);
     retTableList.push(seasonSubList);
     retTableList.push(courseList);
@@ -1524,15 +1562,3 @@ function sheetToTable(){
     }
     sendButtonCondition();
 }
-//////////////////////////
-/////////Salesforce/////////////
-/*function jsonExtract(){;
-    var Course = '{ "Attribute": [' + '"hed__End_Date__c": [],' + 
-    '"k12kit__Grade_Level__c": [],' + 
-    '"LastModifiedById": [],' +
-    '"hed__Start_Date__c": [],' + 
-    '"hed__Subject_Area__c" : [] ] }';
-    var CourseText = JSON.parse(Course);
-    console.log(CourseText.Attribute.hed__Subject_Area__c);
-    document.getElementById("responseJson").innerHTML = "New text!";
- }*/
