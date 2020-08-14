@@ -291,3 +291,81 @@ tr:hover #deleter{
 #deleter:hover{
   background-color: red;
 }
+
+/*tooltip popup
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  opacity: 0;
+  transition: opacity 0.3s;
+  
+  // Position the tooltip 
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: 50%;
+  margin-left: -60px;
+}
+.tooltip .tooltiptext::after {
+	margin-top: 0px;
+  	content: "";
+  	position: absolute;
+  	bottom: 100%;
+  	left: 50%;
+  	transform: scaleY(-1);
+  	margin-left: -5px;
+  	border-width: 5px;
+ 	border-style: solid;
+  	border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}*/
+/*Confirm Box*/
+#confirm {
+  display: none;
+  border-radius: 5px;
+  background-color: white;
+  border: 1px solid #aaa;
+  position: fixed;
+  width: 450px;
+  left: 50%;
+  margin-left: -218px;
+  padding: 6px 8px 8px;
+  box-sizing: border-box;
+  text-align: center;
+  top: -150px;
+  transform: translateY(110%);
+  transition: transform .3s ease;
+}
+#confirm button {
+  background-color: #046cfd;
+  display: inline-block;
+  border-radius: 5px;
+  border: 1px solid #aaa;
+  padding: 10px;
+  text-align: center;
+  color: whitesmoke;
+  font-size: 15px;
+  width: auto;
+  cursor: pointer;
+}
+#confirm .message {
+  text-align: center;
+  white-space: break-spaces;
+  line-height: 1.3;
+}
+/* End of Confirm box*/
