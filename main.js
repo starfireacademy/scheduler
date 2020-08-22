@@ -291,7 +291,7 @@ function dropTValues(){
     console.log(dayChose);
     console.log("Filtering:");
     console.log(filterFlag);
-    if(timeChose == "--Time--" && dayChose.length <= 0){
+    if(!filterFlag && timeChose == "--Time--"){
         console.log("Normal Times.")
         for(var tD=0; tD < Object.values(final_teachers[teacherName]["days"]).length; tD++){
             ////console.log(tD);
